@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JC Labs — Portfolio</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/W3r06wPf/JCLabs-favicon-03-02.png">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/400.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/600.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/700.min.css" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ============================================
+           VARIABLES CSS
+           ============================================ */
+        :root {
+            --black: #0a0a0a; --white: #ffffff; --gray-100: #f5f5f5; --gray-200: #e5e5e5; --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3; --gray-500: #737373; --gray-600: #525252; --gray-700: #404040;
+            --gray-800: #262626; --gray-900: #171717; --font-heading: 'Jost', sans-serif; --font-body: 'Jost', sans-serif;
+            --glass-bg: rgba(255, 255, 255, 0.75); --glass-border: rgba(255, 255, 255, 0.3); --glass-shadow: 0 4px 32px rgba(0, 0, 0, 0.06);
+            --accent: #ffffff;
+        }
+
+        /* ============================================
+           BASE STYLES
+           ============================================ */
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body { font-family: var(--font-body); font-weight: 700; background: var(--white); color: var(--black); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: none; }
+
+        /* ============================================
+           CUSTOM CURSOR
+           ============================================ */
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+            background: var(--white); border-radius: 50%; pointer-events: none;
+            z-index: 10000; mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+        .cursor-ring {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            border: 1.5px solid rgba(255,255,255,0.5); border-radius: 50%;
+            pointer-events: none; z-index: 10000; mix-blend-mode: difference;
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+        }
+        .cursor-ring.hover { width: 60px; height: 60px; border-color: var(--accent); }
+        .cursor-ring.click { width: 30px; height: 30px; }
+
+        @media (hover: none), (pointer: coarse) {
+            .cursor-dot, .cursor-ring { display: none !important; }
+            body { cursor: auto; }
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .lang-toggle { display: flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 30px; padding: 4px; border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 2px 12px rgba(0,0,0,0.08); flex-shrink: 0; }
+        .lang-btn { padding: 6px 16px; border: none; background: transparent; color: var(--gray-500); font-family: var(--font-body); font-size: 12px; font-weight: 600; letter-spacing: 1px; cursor: pointer; border-radius: 26px; transition: all 0.3s ease; text-transform: uppercase; }
+        .lang-btn.active { background: var(--black); color: var(--white); }
+        .lang-btn:active { transform: scale(0.95); }
+        .nav-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0 40px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-container.scrolled { padding: 0 40px; }
+
+        /* ============================================
+           EFECTO DE CRISTAL ESFUMADO - GLASSMORPHISM
+           ============================================ */
+        .glass-nav {
+            display: flex;
+            align-items: center;
+            padding: 12px 28px;
+            margin-top: 20px;
+            border-radius: 60px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.15) 100%);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            border-radius: 60px;
+        }
+
+        .nav-container.scrolled .glass-nav {
+            margin-top: 10px;
+            padding: 10px 28px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.25) 100%);
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-container.scrolled .glass-nav::before {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 60%);
+        }
+
+        .logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; position: relative; z-index: 1; }
+        .logo img { height: 36px; width: auto; object-fit: contain; }
+        .nav-links-wrapper { flex: 1; display: flex; justify-content: center; position: relative; z-index: 1; }
+        .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav-links a { color: var(--white); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s ease; position: relative; }
+        .nav-container.scrolled .glass-nav .nav-links a { color: var(--black); }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--white); transition: width 0.3s ease; }
+        .nav-container.scrolled .glass-nav .nav-links a::after { background: var(--black); }
+        .nav-links a:hover { color: var(--white); opacity: 0.8; }
+        .nav-container.scrolled .glass-nav .nav-links a:hover { color: var(--black); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active-link { color: var(--white); opacity: 1; }
+        .nav-container.scrolled .glass-nav .nav-links a.active-link { color: var(--black); }
+        .nav-links a.active-link::after { width: 100%; }
+        .mobile-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; z-index: 1002; flex-shrink: 0; position: relative; }
+        .mobile-toggle span { width: 24px; height: 1.5px; background: var(--white); transition: all 0.3s ease; transform-origin: center; }
+        .nav-container.scrolled .glass-nav .mobile-toggle span { background: var(--black); }
+        .mobile-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-toggle.open span:nth-child(2) { opacity: 0; }
+        .mobile-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); z-index: 999; flex-direction: column; justify-content: center; align-items: center; gap: 36px; opacity: 0; transition: opacity 0.4s ease; }
+        .mobile-menu-overlay.open { display: flex; opacity: 1; }
+        .mobile-menu-overlay a { color: var(--white); text-decoration: none; font-family: var(--font-heading); font-size: 32px; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; opacity: 0; transform: translateY(20px); transition: all 0.4s ease; }
+        .mobile-menu-overlay.open a { opacity: 1; transform: translateY(0); }
+        .mobile-menu-overlay.open a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu-overlay.open a:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-menu-overlay.open a:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-menu-overlay.open a:nth-child(4) { transition-delay: 0.25s; }
+        .mobile-menu-overlay.open a:nth-child(5) { transition-delay: 0.3s; }
+
+        /* ============================================
+           HERO SECTION CON PARALLAX
+           ============================================ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: -20%;
+            left: 0;
+            width: 100%;
+            height: 140%;
+            z-index: 0;
+            will-change: transform;
+        }
+
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            filter: grayscale(0%) contrast(1.05) brightness(0.85);
+            display: block;
+        }
+
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.08) 30%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.65) 100%); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; max-width: 900px; display: flex; flex-direction: column; align-items: center; }
+        .hero-logo-wrapper { margin-bottom: 32px; }
+        .hero-logo { width: clamp(140px, 20vw, 240px); height: auto; object-fit: contain; filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 60px rgba(0, 0, 0, 0.3)); opacity: 0.95; }
+        .hero-title { font-family: var(--font-heading); font-size: clamp(28px, 5.5vw, 64px); font-weight: 400; color: var(--white); letter-spacing: clamp(2px, 1vw, 6px); text-transform: uppercase; line-height: 1.1; margin-bottom: 20px; text-shadow: 0 4px 50px rgba(0,0,0,0.5); }
+        .hero-subtitle { font-family: var(--font-body); font-size: clamp(14px, 2vw, 18px); color: rgba(255,255,255,0.8); letter-spacing: clamp(0.5px, 0.3vw, 1px); font-weight: 600; margin-bottom: 40px; line-height: 1.6; max-width: 700px; }
+        .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary { padding: 14px 36px; background: var(--white); color: var(--black); border: none; border-radius: 50px; font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,255,255,0.2); }
+        .btn-outline { padding: 14px 36px; background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.4); border-radius: 50px; font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: var(--white); transform: translateY(-2px); }
+
+        /* ============================================
+           GALLERY / PORTFOLIO SECTION
+           ============================================ */
+        .gallery-section { padding: 80px 0; background: var(--white); width: 100%; position: relative; }
+        .gallery-header { text-align: center; max-width: 800px; margin: 0 auto 48px; padding: 0 24px; }
+        .gallery-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 16px; }
+        .gallery-title { font-family: var(--font-heading); font-size: clamp(26px, 4.5vw, 48px); font-weight: 400; color: var(--black); letter-spacing: 1px; text-transform: uppercase; line-height: 1.2; margin-bottom: 20px; }
+        .gallery-desc { font-size: 14px; color: var(--gray-500); max-width: 680px; margin: 0 auto; line-height: 1.7; font-weight: 600; }
+
+        /* ============================================
+           CAMPAIGN TABS
+           ============================================ */
+        .campaign-tabs-wrapper { position: sticky; top: 90px; z-index: 100; background: linear-gradient(180deg, var(--white) 0%, rgba(255,255,255,0.95) 80%, rgba(255,255,255,0) 100%); padding: 24px 0 32px; }
+        .campaign-tabs { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; padding: 0 24px; }
+        .campaign-tab { padding: 12px 28px; border: 1.5px solid var(--gray-200); border-radius: 50px; background: transparent; color: var(--gray-600); font-family: var(--font-body); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
+        .campaign-tab:hover { border-color: var(--black); color: var(--black); background: var(--gray-100); }
+        .campaign-tab.active { background: var(--black); color: var(--white); border-color: var(--black); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+
+        /* ============================================
+           CAMPAIGN PANELS
+           ============================================ */
+        .campaign-panel { display: none; animation: gridFadeIn 0.5s ease forwards; }
+        .campaign-panel.active { display: block; }
+        @keyframes gridFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ============================================
+           BENTO GRID
+           ============================================ */
+        .bento-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; padding: 0 16px; }
+        .bento-item { position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; background: var(--gray-100); }
+        .bento-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bento-item:hover img { transform: scale(1.04); }
+        .bento-item .bento-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.55) 100%); opacity: 0; transition: opacity 0.4s ease; display: flex; align-items: flex-end; padding: 16px; }
+        .bento-item:hover .bento-overlay { opacity: 1; }
+        .bento-overlay-text { color: var(--white); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; transform: translateY(8px); transition: transform 0.4s ease; }
+        .bento-item:hover .bento-overlay-text { transform: translateY(0); }
+
+        /* ============================================
+           BENTO GRID SIZES
+           ============================================ */
+        .bento-item.size-lg { grid-column: span 2; grid-row: span 2; }
+        .bento-item.size-tall { grid-column: span 1; grid-row: span 2; }
+        .bento-item.size-wide { grid-column: span 2; grid-row: span 1; }
+        .bento-item.size-sm { grid-column: span 1; grid-row: span 1; }
+        .bento-item.size-xl { grid-column: span 3; grid-row: span 2; }
+        .bento-item.size-hero { grid-column: span 4; grid-row: span 3; }
+        .bento-grid { auto-rows: minmax(0, 220px); }
+
+        /* ============================================
+           FLOATING SCROLL TO TOP BUTTON
+           ============================================ */
+        .floating-scroll-top {
+            position: fixed;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%) translateX(120px);
+            z-index: 950;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            border-radius: 16px;
+            padding: 14px 10px 12px;
+            font-family: var(--font-body);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .floating-scroll-top.visible {
+            transform: translateY(-50%) translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .floating-scroll-top:hover {
+            background: var(--gray-800);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            transform: translateY(-50%) translateX(0) scale(1.03);
+        }
+
+        .floating-scroll-top:active {
+            transform: translateY(-50%) translateX(0) scale(0.97);
+        }
+
+        .floating-scroll-top svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-scroll-top:hover svg {
+            transform: translateY(-3px);
+        }
+
+        .floating-scroll-top-text {
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            white-space: nowrap;
+        }
+
+        /* ============================================
+           LIGHTBOX MODAL
+           ============================================ */
+        .lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .lightbox.open { opacity: 1; visibility: visible; }
+        .lightbox-content { position: relative; max-width: 95vw; max-height: 95vh; transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; }
+        .lightbox.open .lightbox-content { transform: scale(1); }
+        .lightbox-content img { max-width: 95vw; max-height: 95vh; object-fit: contain; display: block; border-radius: 8px; }
+        .lightbox-close { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; border-radius: 50%; border: none; background: rgba(255,255,255,0.12); color: var(--white); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(8px); z-index: 10; }
+        .lightbox-close:hover { background: rgba(255,255,255,0.25); transform: rotate(90deg); }
+        .lightbox-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: var(--white); font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(8px); z-index: 10; }
+        .lightbox-nav:hover { background: rgba(255,255,255,0.2); }
+        .lightbox-prev { left: 20px; }
+        .lightbox-next { right: 20px; }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer { padding: 40px; border-top: 1px solid var(--gray-200); background: var(--white); }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .footer-copy { font-size: 13px; font-weight: 700; color: var(--gray-500); }
+        .footer-social { display: flex; gap: 20px; }
+        .footer-social a { color: var(--gray-400); transition: color 0.3s ease; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; }
+        .footer-social a:hover { color: var(--black); background: var(--gray-100); }
+        .footer-tagline { font-size: 13px; font-weight: 700; color: var(--gray-400); font-style: italic; }
+
+        /* ============================================
+           REVEAL ANIMATIONS
+           ============================================ */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ============================================
+           RESPONSIVE - TABLET LARGE
+           ============================================ */
+        @media (max-width: 1200px) {
+            .bento-grid { grid-template-columns: repeat(6, 1fr); auto-rows: minmax(0, 200px); gap: 10px; padding: 0 12px; }
+        }
+
+        /* ============================================
+           RESPONSIVE - TABLET
+           ============================================ */
+        @media (max-width: 1024px) {
+            .nav-container { padding: 0 24px; }
+            .lightbox-prev { left: 12px; }
+            .lightbox-next { right: 12px; }
+            .floating-scroll-top { right: 20px; }
+        }
+
+        /* ============================================
+           RESPONSIVE - MOBILE
+           ============================================ */
+        @media (max-width: 767px) {
+            html { font-size: 15px; }
+            .nav-container { padding: 0 16px; top: 12px; left: 12px; right: 12px; }
+            .glass-nav { display: flex; align-items: center; padding: 12px 20px; margin-top: 0; border-radius: 50px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%); backdrop-filter: blur(20px) saturate(150%); -webkit-backdrop-filter: blur(20px) saturate(150%); }
+            .nav-container.scrolled .glass-nav { margin-top: 0; padding: 10px 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.3) 100%); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); }
+            .mobile-toggle { display: flex; }
+            .logo { margin-left: 20px; }
+            .logo img { height: 28px; }
+            .nav-links-wrapper { display: none !important; }
+            .lang-toggle { margin-left: auto; }
+            .hero-content { padding: 0 20px; }
+            .hero-logo { margin-bottom: 24px; }
+            .hero-title { margin-bottom: 16px; font-size: clamp(24px, 8vw, 36px); }
+            .hero-subtitle { margin-bottom: 32px; line-height: 1.6; font-size: clamp(13px, 3.5vw, 15px); }
+            .hero-ctas { flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 280px; margin: 0 auto; }
+            .btn-primary, .btn-outline { width: 100%; text-align: center; padding: 16px 32px; font-size: 15px; }
+            .gallery-section { padding: 48px 0; }
+            .gallery-header { padding: 0 16px; margin-bottom: 32px; }
+            .campaign-tabs-wrapper { top: 70px; padding: 16px 0 24px; }
+            .bento-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 8px; auto-rows: minmax(0, 180px); }
+            .bento-item { border-radius: 8px; }
+            .bento-item.size-lg { grid-column: span 2; grid-row: span 2; }
+            .bento-item.size-tall { grid-column: span 1; grid-row: span 2; }
+            .bento-item.size-wide { grid-column: span 2; grid-row: span 1; }
+            .bento-item.size-sm { grid-column: span 1; grid-row: span 1; }
+            .bento-item.size-xl { grid-column: span 2; grid-row: span 2; }
+            .bento-item.size-hero { grid-column: span 2; grid-row: span 2; }
+            .campaign-tabs { gap: 8px; padding: 0 12px; }
+            .campaign-tab { padding: 10px 16px; font-size: 11px; letter-spacing: 0.3px; }
+            .footer { padding: 32px 20px; }
+            .footer-content { flex-direction: column; text-align: center; gap: 16px; }
+            .footer-social { gap: 12px; }
+            .footer-tagline { text-align: center; }
+            .lightbox-close { top: 16px; right: 16px; width: 44px; height: 44px; font-size: 22px; }
+            .lightbox-nav { width: 44px; height: 44px; font-size: 20px; }
+            .lightbox-prev { left: 8px; }
+            .lightbox-next { right: 8px; }
+            .floating-scroll-top { right: 16px; padding: 12px 8px 10px; border-radius: 14px; }
+            .floating-scroll-top svg { width: 18px; height: 18px; }
+            .floating-scroll-top-text { font-size: 9px; letter-spacing: 0.8px; }
+        }
+
+        /* ============================================
+           RESPONSIVE - SMALL MOBILE
+           ============================================ */
+        @media (max-width: 400px) {
+            .nav-container { padding: 0 12px; top: 10px; left: 10px; right: 10px; }
+            .glass-nav { padding: 10px 16px; }
+            .mobile-menu-overlay a { font-size: 24px; letter-spacing: 2px; }
+            .bento-grid { auto-rows: minmax(0, 160px); }
+        }
+
+        /* ============================================
+           TOUCH DEVICES
+           ============================================ */
+        @media (hover: none) {
+            .btn-primary:hover, .btn-outline:hover { transform: none; box-shadow: none; }
+            .footer-social a:hover { background: transparent; }
+            .footer-social a:active { background: var(--gray-100); color: var(--black); }
+            .bento-item .bento-overlay { opacity: 1; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.4) 100%); }
+            .bento-overlay-text { transform: translateY(0); }
+        }
+
+        /* ============================================
+           REDUCED MOTION
+           ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+            html { scroll-behavior: auto; }
+            .reveal { opacity: 1; transform: none; }
+            @keyframes gridFadeIn { from { opacity: 1; transform: none; } to { opacity: 1; transform: none; } }
+            .floating-scroll-top { transition: none; }
+        }
+
+        /* ============================================
+           RESPONSIVE - MOBILE FOOTER & LANG
+           ============================================ */
+        @media (max-width: 767px) {
+            .footer-social a { width: 44px; height: 44px; }
+            .lang-btn { min-height: 36px; display: flex; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         CUSTOM CURSOR
+         ============================================ -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- ============================================
+         FLOATING SCROLL TO TOP BUTTON
+         ============================================ -->
+    <button class="floating-scroll-top" id="floatingScrollTop" onclick="scrollToGalleryTop()" aria-label="Back to top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+        <span class="floating-scroll-top-text">Back to Top</span>
+    </button>
+
+    <!-- ============================================
+         NAVIGATION HTML
+         ============================================ -->
+    <nav class="nav-container" id="navbar">
+        <div class="glass-nav">
+            <button class="mobile-toggle" id="mobileToggle" onclick="toggleMobile()" aria-label="Open navigation menu"><span></span><span></span><span></span></button>
+            <a href="index.html" class="logo"><img src="https://i.postimg.cc/3wSN81fy/JC-Labs-Logo.png" alt="JC Labs - Agencia de Diseño Digital e Inteligencia Artificial"></a>
+            <div class="nav-links-wrapper"><ul class="nav-links" id="navLinks"></ul></div>
+            <div class="lang-toggle"><button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button><button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button></div>
+        </div>
+    </nav>
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <a href="index.html" onclick="closeMobile()" data-i18n="nav_home">Home</a>
+        <a href="services.html" onclick="closeMobile()" data-i18n="nav_services">Services</a>
+        <a href="portfolio.html" onclick="closeMobile()" data-i18n="nav_gallery">Portfolio</a>
+        <a href="contact.html" onclick="closeMobile()" data-i18n="nav_contact">Contact</a>
+    </div>
+
+    <!-- ============================================
+         HERO SECTION CON PARALLAX
+         ============================================ -->
+    <section class="hero" id="hero">
+        <div class="hero-bg" id="heroBg">
+            <img src="https://i.postimg.cc/wBfzjGxh/Banner-Hero-Servces.jpg" alt="JC Labs - Banner Hero Servicios Fotografía Moda IA">
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-logo-wrapper">
+                <img src="https://i.postimg.cc/s2Lz0ggt/JC-Labs-Logo.png" alt="JC Labs Logo" class="hero-logo">
+            </div>
+            <h1 class="hero-title" data-i18n="hero_title">AI Fashion Photography for E-commerce</h1>
+            <h2 class="hero-subtitle" data-i18n="hero_subtitle">We create hyper-realistic virtual models and 3D catalogs for independent brands. Multiply your images without production costs.</h2>
+            <div class="hero-ctas">
+                <a href="portfolio.html" class="btn-primary" data-i18n="hero_cta_primary">View Portfolio</a>
+                <a href="contact.html" class="btn-outline" data-i18n="hero_cta_outline">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         GALLERY / PORTFOLIO SECTION HTML
+         ============================================ -->
+    <section class="gallery-section" id="gallery">
+        <div class="gallery-header reveal">
+            <p class="gallery-label" data-i18n="gallery_label">Portfolio</p>
+            <h2 class="gallery-title" data-i18n="gallery_title">Digital Catalogs Without Production Limits</h2>
+            <p class="gallery-desc" data-i18n="gallery_desc">Visualize the future of traditional photoshoots through our portfolio. We create consistent visual content using exclusive AI avatars for your brand. Drastically reduce time-to-market for your new clothing collections. Maximize ROI by digitizing your garments with professional studio quality.</p>
+        </div>
+
+        <!-- Sticky Campaign Tabs -->
+        <div class="campaign-tabs-wrapper">
+            <div class="campaign-tabs reveal">
+                <button class="campaign-tab active" data-campaign="1" onclick="switchCampaign(1)">Virtual Photography for E-commerce</button>
+                <button class="campaign-tab" data-campaign="2" onclick="switchCampaign(2)">AI Photography for Campaigns</button>
+                <button class="campaign-tab" data-campaign="3" onclick="switchCampaign(3)">3D Fashion Design</button>
+            </div>
+        </div>
+
+        <!-- Campaign Panels -->
+        <div class="campaign-panel active" id="campaign-1">
+            <div class="bento-grid" id="bento-grid-1"></div>
+        </div>
+        <div class="campaign-panel" id="campaign-2">
+            <div class="bento-grid" id="bento-grid-2"></div>
+        </div>
+        <div class="campaign-panel" id="campaign-3">
+            <div class="bento-grid" id="bento-grid-3"></div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         LIGHTBOX MODAL HTML
+         ============================================ -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+            <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)" aria-label="Previous">&#8249;</button>
+            <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)" aria-label="Next">&#8250;</button>
+            <img src="" alt="" id="lightbox-img">
+        </div>
+    </div>
+
+    <!-- ============================================
+         FOOTER HTML
+         ============================================ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="footer-copy">Copyright © JC Labs</span>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+                <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+            </div>
+            <span class="footer-tagline" data-i18n="footer_tagline">Designing products and visual worlds with AI</span>
+        </div>
+    </footer>
+
+    <script>
+        /* ============================================
+           PARALLAX EFFECT - HERO BANNER
+           ============================================ */
+        var heroBgEl = document.getElementById('heroBg');
+        var parallaxSpeed = 0.4;
+
+        function updateParallax() {
+            var scrollPos = window.scrollY || window.pageYOffset;
+            if (heroBgEl) {
+                var translateY = scrollPos * parallaxSpeed;
+                heroBgEl.style.transform = 'translate3d(0, ' + translateY + 'px, 0)';
+            }
+        }
+
+        /* ============================================
+           TRANSLATIONS
+           ============================================ */
+        const translations = {
+            en: {
+                nav_home: "Home", nav_services: "Services", nav_gallery: "Portfolio", nav_contact: "Contact",
+                hero_title: "AI Fashion Photography for E-commerce",
+                hero_subtitle: "We create hyper-realistic virtual models and 3D catalogs for independent brands. Multiply your images without production costs.",
+                hero_cta_primary: "View Portfolio", hero_cta_outline: "Contact Us",
+                gallery_label: "Portfolio", gallery_title: "Digital Catalogs Without Production Limits",
+                gallery_desc: "Visualize the future of traditional photoshoots through our portfolio. We create consistent visual content using exclusive AI avatars for your brand. Drastically reduce time-to-market for your new clothing collections. Maximize ROI by digitizing your garments with professional studio quality.",
+                footer_tagline: "Designing products and visual worlds with AI",
+                go_up: "Back to Top",
+                lightbox_prev: "Previous", lightbox_next: "Next", lightbox_close: "Close",
+                nav_aria_label: "Open navigation menu"
+            },
+            es: {
+                nav_home: "Inicio", nav_services: "Servicios", nav_gallery: "Portfolio", nav_contact: "Contacto",
+                hero_title: "Fotografía de Moda con IA para E-commerce",
+                hero_subtitle: "Creamos modelos virtuales y catálogos 3D hiperrealistas para marcas independientes. Multiplica tus imágenes sin costes de producción.",
+                hero_cta_primary: "Ver Portfolio", hero_cta_outline: "Contactar",
+                gallery_label: "Portfolio", gallery_title: "Catálogos Digitales sin Límites de Producción",
+                gallery_desc: "Visualice el futuro de las sesiones fotográficas tradicionales a través de nuestro porfolio. Creamos contenido visual consistente utilizando avatares de IA exclusivos para su marca. Reduzca drásticamente los tiempos de lanzamiento al mercado de sus nuevas colecciones de ropa. Maximice el retorno de inversión digitalizando sus prendas con calidad de estudio profesional.",
+                footer_tagline: "Diseñando productos y mundos visuales con IA",
+                go_up: "Volver Arriba",
+                lightbox_prev: "Anterior", lightbox_next: "Siguiente", lightbox_close: "Cerrar",
+                nav_aria_label: "Abrir menú de navegación"
+            }
+        };
+
+        let currentLang = 'en';
+
+        /* ============================================
+           LANGUAGE SWITCHER
+           ============================================ */
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.toggle('active', btn.dataset.lang === lang); });
+            document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                var key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) el.textContent = translations[lang][key];
+            });
+            document.documentElement.lang = lang;
+            /* Update floating button text */
+            var goUpBtn = document.querySelector('.floating-scroll-top-text');
+            if (goUpBtn && translations[lang].go_up) {
+                goUpBtn.textContent = translations[lang].go_up;
+            }
+            /* Update aria labels */
+            var lightboxPrev = document.querySelector('.lightbox-prev');
+            var lightboxNext = document.querySelector('.lightbox-next');
+            var lightboxClose = document.querySelector('.lightbox-close');
+            var mobileToggle = document.getElementById('mobileToggle');
+            if (lightboxPrev && translations[lang].lightbox_prev) lightboxPrev.setAttribute('aria-label', translations[lang].lightbox_prev);
+            if (lightboxNext && translations[lang].lightbox_next) lightboxNext.setAttribute('aria-label', translations[lang].lightbox_next);
+            if (lightboxClose && translations[lang].lightbox_close) lightboxClose.setAttribute('aria-label', translations[lang].lightbox_close);
+            if (mobileToggle && translations[lang].nav_aria_label) mobileToggle.setAttribute('aria-label', translations[lang].nav_aria_label);
+        }
+
+        /* ============================================
+           MOBILE MENU TOGGLE
+           ============================================ */
+        function toggleMobile() {
+            var toggle = document.getElementById('mobileToggle');
+            var menu = document.getElementById('mobileMenu');
+            toggle.classList.toggle('open');
+            menu.classList.toggle('open');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+        }
+        function closeMobile() {
+            document.getElementById('mobileToggle').classList.remove('open');
+            document.getElementById('mobileMenu').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobile(); });
+
+        /* ============================================
+           SCROLL EFFECTS
+           ============================================ */
+        window.addEventListener('scroll', function() {
+            /* ============================================
+               NAVBAR SCROLL EFFECT
+               ============================================ */
+            var navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) { navbar.classList.add('scrolled'); } else { navbar.classList.remove('scrolled'); }
+
+            /* ============================================
+               PARALLAX UPDATE
+               ============================================ */
+            updateParallax();
+
+            /* ============================================
+               FLOATING BUTTON VISIBILITY
+               Siempre visible mientras la galería esté en viewport
+               ============================================ */
+            var gallerySection = document.getElementById('gallery');
+            var floatingBtn = document.getElementById('floatingScrollTop');
+
+            if (gallerySection && floatingBtn) {
+                var galleryRect = gallerySection.getBoundingClientRect();
+                var galleryTopOffset = galleryRect.top;
+                var galleryBottomOffset = galleryRect.bottom;
+                var viewportHeight = window.innerHeight;
+
+                if (galleryBottomOffset > 0 && galleryTopOffset < viewportHeight) {
+                    floatingBtn.classList.add('visible');
+                } else {
+                    floatingBtn.classList.remove('visible');
+                }
+            }
+        });
+
+        /* ============================================
+           SCROLL TO GALLERY TOP
+           ============================================ */
+        function scrollToGalleryTop() {
+            var gallerySection = document.getElementById('gallery');
+            if (gallerySection) {
+                var galleryRect = gallerySection.getBoundingClientRect();
+                var targetScroll = window.scrollY + galleryRect.top - 100;
+                window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+            }
+        }
+
+        /* ============================================
+           REVEAL ON SCROLL
+           ============================================ */
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) { if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); } });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
+
+        window.addEventListener('resize', function() { if (window.innerWidth > 767) closeMobile(); });
+
+        /* ============================================
+           CUSTOM CURSOR
+           ============================================ */
+        var cursorDot = document.getElementById('cursorDot');
+        var cursorRing = document.getElementById('cursorRing');
+        var cursorX = 0, cursorY = 0;
+        var ringX = 0, ringY = 0;
+        var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        if (!isTouchDevice && cursorDot && cursorRing) {
+            document.addEventListener('mousemove', function(e) {
+                cursorX = e.clientX;
+                cursorY = e.clientY;
+                cursorDot.style.transform = 'translate3d(' + cursorX + 'px, ' + cursorY + 'px, 0) scale(1)';
+            });
+
+            function animateRing() {
+                ringX += (cursorX - ringX) * 0.12;
+                ringY += (cursorY - ringY) * 0.12;
+                cursorRing.style.transform = 'translate3d(' + ringX + 'px, ' + ringY + 'px, 0)';
+                requestAnimationFrame(animateRing);
+            }
+            animateRing();
+
+            /* Hover effects for interactive elements */
+            var hoverTargets = document.querySelectorAll('a, button, .bento-item, .campaign-tab, .lang-btn');
+            hoverTargets.forEach(function(el) {
+                el.addEventListener('mouseenter', function() { cursorRing.classList.add('hover'); cursorDot.style.transform = 'translate3d(' + cursorX + 'px, ' + cursorY + 'px, 0) scale(1.5)'; });
+                el.addEventListener('mouseleave', function() { cursorRing.classList.remove('hover'); cursorDot.style.transform = 'translate3d(' + cursorX + 'px, ' + cursorY + 'px, 0) scale(1)'; });
+            });
+
+            /* Click effects */
+            document.addEventListener('mousedown', function() { cursorRing.classList.add('click'); });
+            document.addEventListener('mouseup', function() { cursorRing.classList.remove('click'); });
+        }
+
+        /* ============================================
+           BENTO GRID SIZES ARRAY
+           ============================================ */
+        var bentoSizes = ['size-hero','size-sm','size-tall','size-wide','size-lg','size-xl','size-sm','size-lg','size-wide','size-sm','size-tall','size-lg','size-hero','size-xl','size-sm','size-wide','size-tall','size-sm','size-lg','size-wide','size-hero','size-sm','size-tall','size-lg','size-xl','size-sm','size-wide','size-lg','size-tall','size-xl','size-sm','size-lg','size-wide','size-tall','size-sm','size-hero','size-xl','size-sm','size-wide','size-lg','size-tall','size-lg','size-xl','size-sm','size-wide','size-tall','size-hero','size-lg','size-sm','size-wide','size-xl','size-tall'];
+
+        /* ============================================
+           CAMPAIGN DATA
+           ============================================ */
+        var campaignData = {
+            1: [
+                { url: 'https://i.postimg.cc/XvCz51n3/catalogo-digital-moda-masculina-casual-A-1.jpg', label: 'Men\'s Casual Fashion 01' },
+                { url: 'https://i.postimg.cc/nLDPmSnn/catalogo-digital-moda-masculina-casual-A-2.jpg', label: 'Men\'s Casual Fashion 02' },
+                { url: 'https://i.postimg.cc/rprP4ZqF/catalogo-digital-moda-masculina-casual-A-3.jpg', label: 'Men\'s Casual Fashion 03' },
+                { url: 'https://i.postimg.cc/VNCVtZz6/catalogo-digital-moda-masculina-casual-A-4.jpg', label: 'Men\'s Casual Fashion 04' },
+                { url: 'https://i.postimg.cc/R0HDtpvn/catalogo-digital-moda-masculina-casual-A-5.jpg', label: 'Men\'s Casual Fashion 05' },
+                { url: 'https://i.postimg.cc/yNZbRp7Z/catalogo-digital-moda-masculina-casual-A-6.jpg', label: 'Men\'s Casual Fashion 06' },
+                { url: 'https://i.postimg.cc/NMvPk805/catalogo-digital-moda-masculina-casual-A-7.jpg', label: 'Men\'s Casual Fashion 07' },
+                { url: 'https://i.postimg.cc/PxnFQbqF/catalogo-digital-moda-masculina-casual-B-1.jpg', label: 'Men\'s Fashion B 01' },
+                { url: 'https://i.postimg.cc/j563gWW8/catalogo-digital-moda-masculina-casual-B-2.jpg', label: 'Men\'s Fashion B 02' },
+                { url: 'https://i.postimg.cc/505K7HHK/catalogo-digital-moda-masculina-casual-B-3.jpg', label: 'Men\'s Fashion B 03' },
+                { url: 'https://i.postimg.cc/PxbV3LL7/catalogo-digital-moda-masculina-casual-B-4.jpg', label: 'Men\'s Fashion B 04' },
+                { url: 'https://i.postimg.cc/hj8ZyJJH/catalogo-digital-moda-masculina-casual-B-5.jpg', label: 'Men\'s Fashion B 05' },
+                { url: 'https://i.postimg.cc/vB72q1gw/catalogo-digital-moda-masculina-casual-B-6.jpg', label: 'Men\'s Fashion B 06' },
+                { url: 'https://i.postimg.cc/W3mYWDFV/catalogo-digital-moda-masculina-casual-B-7.jpg', label: 'Men\'s Fashion B 07' },
+                { url: 'https://i.postimg.cc/zvJt9JK1/catalogo-digital-moda-masculina-casual-C-1.jpg', label: 'Men\'s Fashion C 01' },
+                { url: 'https://i.postimg.cc/Gtc7ZcG3/catalogo-digital-moda-masculina-casual-C-2.jpg', label: 'Men\'s Fashion C 02' },
+                { url: 'https://i.postimg.cc/2yzcPzh5/catalogo-digital-moda-masculina-casual-C-3.jpg', label: 'Men\'s Fashion C 03' },
+                { url: 'https://i.postimg.cc/MT03PcMZ/catalogo-digital-moda-masculina-casual-C-4.jpg', label: 'Men\'s Fashion C 04' },
+                { url: 'https://i.postimg.cc/cH7k9Kgx/catalogo-digital-moda-masculina-casual-C-5.jpg', label: 'Men\'s Fashion C 05' },
+                { url: 'https://i.postimg.cc/3NKSPKmM/catalogo-digital-moda-masculina-casual-C-6.jpg', label: 'Men\'s Fashion C 06' },
+                { url: 'https://i.postimg.cc/26NX7d5Q/Men-s-clothing-product-shots-10.jpg', label: 'Men\'s Clothing 10' },
+                { url: 'https://i.postimg.cc/bJfF90v0/Men-s-clothing-product-shots-11.jpg', label: 'Men\'s Clothing 11' },
+                { url: 'https://i.postimg.cc/wvYbQ5Bt/Men-s-clothing-product-shots-12.jpg', label: 'Men\'s Clothing 12' },
+                { url: 'https://i.postimg.cc/76rQn1LG/Men-s-clothing-product-shots-5.jpg', label: 'Men\'s Clothing 05' },
+                { url: 'https://i.postimg.cc/G2nSxPpx/Men-s-clothing-product-shots-9.jpg', label: 'Men\'s Clothing 09' },
+                { url: 'https://i.postimg.cc/SKMv91mh/modelos-ia-ropa-gimnasia-mujer-shopify-A-01.jpg', label: 'Gym Wear A 01' },
+                { url: 'https://i.postimg.cc/CKqQ8rwp/modelos-ia-ropa-gimnasia-mujer-shopify-A-02.jpg', label: 'Gym Wear A 02' },
+                { url: 'https://i.postimg.cc/52Gr6WWM/modelos-ia-ropa-gimnasia-mujer-shopify-A-03.jpg', label: 'Gym Wear A 03' },
+                { url: 'https://i.postimg.cc/BnyzXff0/modelos-ia-ropa-gimnasia-mujer-shopify-A-04.jpg', label: 'Gym Wear A 04' },
+                { url: 'https://i.postimg.cc/13Tdf11S/modelos-ia-ropa-gimnasia-mujer-shopify-A-05.jpg', label: 'Gym Wear A 05' },
+                { url: 'https://i.postimg.cc/dVXfLcPn/modelos-ia-ropa-gimnasia-mujer-shopify-A-06.jpg', label: 'Gym Wear A 06' },
+                { url: 'https://i.postimg.cc/mgqntWfK/modelos-ia-ropa-gimnasia-mujer-shopify-A-07.jpg', label: 'Gym Wear A 07' },
+                { url: 'https://i.postimg.cc/XYhPp6S8/modelos-ia-ropa-gimnasia-mujer-shopify-A-08.jpg', label: 'Gym Wear A 08' },
+                { url: 'https://i.postimg.cc/0jcWvL07/modelos-ia-ropa-gimnasia-mujer-shopify-B-01.jpg', label: 'Gym Wear B 01' },
+                { url: 'https://i.postimg.cc/kGf1CkvH/modelos-ia-ropa-gimnasia-mujer-shopify-B-010.jpg', label: 'Gym Wear B 10' },
+                { url: 'https://i.postimg.cc/PJ23HBQ0/modelos-ia-ropa-gimnasia-mujer-shopify-B-011.jpg', label: 'Gym Wear B 11' },
+                { url: 'https://i.postimg.cc/MHdPwhmC/modelos-ia-ropa-gimnasia-mujer-shopify-B-012.jpg', label: 'Gym Wear B 12' },
+                { url: 'https://i.postimg.cc/8kHnL6gT/modelos-ia-ropa-gimnasia-mujer-shopify-B-013.jpg', label: 'Gym Wear B 13' },
+                { url: 'https://i.postimg.cc/mZw67HWb/modelos-ia-ropa-gimnasia-mujer-shopify-B-014.jpg', label: 'Gym Wear B 14' },
+                { url: 'https://i.postimg.cc/fWKgY9Qz/modelos-ia-ropa-gimnasia-mujer-shopify-B-015.jpg', label: 'Gym Wear B 15' },
+                { url: 'https://i.postimg.cc/HW2Pby1W/modelos-ia-ropa-gimnasia-mujer-shopify-B-016.jpg', label: 'Gym Wear B 16' },
+                { url: 'https://i.postimg.cc/wM6fS6Lv/modelos-ia-ropa-gimnasia-mujer-shopify-B-02.jpg', label: 'Gym Wear B 02' },
+                { url: 'https://i.postimg.cc/x80xW0Mv/modelos-ia-ropa-gimnasia-mujer-shopify-B-04.jpg', label: 'Gym Wear B 04' },
+                { url: 'https://i.postimg.cc/d3qHzqrR/modelos-ia-ropa-gimnasia-mujer-shopify-B-05.jpg', label: 'Gym Wear B 05' },
+                { url: 'https://i.postimg.cc/x8txQW3M/modelos-ia-ropa-gimnasia-mujer-shopify-B-06.jpg', label: 'Gym Wear B 06' },
+                { url: 'https://i.postimg.cc/BbMY3dBN/modelos-ia-ropa-gimnasia-mujer-shopify-B-07.jpg', label: 'Gym Wear B 07' },
+                { url: 'https://i.postimg.cc/d34HFzjB/modelos-ia-ropa-gimnasia-mujer-shopify-B-08.jpg', label: 'Gym Wear B 08' },
+                { url: 'https://i.postimg.cc/tJ2SbLNv/modelos-ia-ropa-gimnasia-mujer-shopify-B-09.jpg', label: 'Gym Wear B 09' },
+                { url: 'https://i.postimg.cc/K84VGvV5/Simulacion-3d-ropa-novia-alta-costura-A-01.jpg', label: 'Bridal 3D A 01' },
+                { url: 'https://i.postimg.cc/XYXhj7hk/Simulacion-3d-ropa-novia-alta-costura-A-02.jpg', label: 'Bridal 3D A 02' },
+                { url: 'https://i.postimg.cc/K84VGvVN/Simulacion-3d-ropa-novia-alta-costura-A-03.jpg', label: 'Bridal 3D A 03' },
+                { url: 'https://i.postimg.cc/P5NcXrcy/Simulacion-3d-ropa-novia-alta-costura-B-01.jpg', label: 'Bridal 3D B 01' },
+                { url: 'https://i.postimg.cc/Z5gQCztL/Simulacion-3d-ropa-novia-alta-costura-B-02.jpg', label: 'Bridal 3D B 02' }
+            ],
+            2: [
+                { url: 'https://i.postimg.cc/hPmzH94n/Campaing-TZ-White-01.jpg', label: 'TZ White 01' },
+                { url: 'https://i.postimg.cc/T1LL2brV/Campaing-TZ-White-02.jpg', label: 'TZ White 02' },
+                { url: 'https://i.postimg.cc/XqGGN5wK/Campaing-TZ-White-03.jpg', label: 'TZ White 03' },
+                { url: 'https://i.postimg.cc/Rh66Ctcw/Campaing-TZ-White-04.jpg', label: 'TZ White 04' },
+                { url: 'https://i.postimg.cc/DZY4K6bj/Campaing-TZ-White-05.jpg', label: 'TZ White 05' },
+                { url: 'https://i.postimg.cc/ZKNB1rYn/Campaing-TZ-White-06.jpg', label: 'TZ White 06' },
+                { url: 'https://i.postimg.cc/G3VT7MRc/Campaing-TZ-White-07.jpg', label: 'TZ White 07' },
+                { url: 'https://i.postimg.cc/9F9RvGXV/Campaing-TZ-White-08.jpg', label: 'TZ White 08' },
+                { url: 'https://i.postimg.cc/SN92wWQ2/Campaing-TZ-White-09.jpg', label: 'TZ White 09' },
+                { url: 'https://i.postimg.cc/MKBMhyZV/Campaing-TZ-White-10.jpg', label: 'TZ White 10' },
+                { url: 'https://i.postimg.cc/y6t3QfK7/Campaing-TZ-White-11.jpg', label: 'TZ White 11' },
+                { url: 'https://i.postimg.cc/CL8BWjMM/Campaing-TZ-White-12.jpg', label: 'TZ White 12' },
+                { url: 'https://i.postimg.cc/yxgg6RmH/Campaing-TZ-Black-002.jpg', label: 'TZ Black 02' },
+                { url: 'https://i.postimg.cc/yxgg6RF2/Campaing-TZ-Black-01.jpg', label: 'TZ Black 01' },
+                { url: 'https://i.postimg.cc/SRBXnKdK/Campaing-TZ-Red.jpg', label: 'TZ Red Hero' },
+                { url: 'https://i.postimg.cc/9064Dfb2/Campaing-TZ-Red-01.jpg', label: 'TZ Red 01' },
+                { url: 'https://i.postimg.cc/T1zyKP9F/Campaing-TZ-Red-02.jpg', label: 'TZ Red 02' },
+                { url: 'https://i.postimg.cc/qqPtN7wH/Campaing-TZ-Red-03.jpg', label: 'TZ Red 03' },
+                { url: 'https://i.postimg.cc/fyttWdcM/Campaing-TZ-Red-04.jpg', label: 'TZ Red 04' },
+                { url: 'https://i.postimg.cc/d3b7h06Y/Campaing-TZ-Red-05.jpg', label: 'TZ Red 05' },
+                { url: 'https://i.postimg.cc/XqRZrvLC/Campaing-TZ-Red-06.jpg', label: 'TZ Red 06' },
+                { url: 'https://i.postimg.cc/NF3yK0DF/Campaing-TZ-Red-07.jpg', label: 'TZ Red 07' },
+                { url: 'https://i.postimg.cc/QNwK463R/Campaing-TZ-Red-08.jpg', label: 'TZ Red 08' },
+                { url: 'https://i.postimg.cc/dQpZHWY6/Campaing-TZ-Red-09.jpg', label: 'TZ Red 09' },
+                { url: 'https://i.postimg.cc/Pf9v36Hh/Campaing-TZ-Red-10.jpg', label: 'TZ Red 10' },
+                { url: 'https://i.postimg.cc/y6t3QfKs/Campaing-TZ-Red-11.jpg', label: 'TZ Red 11' },
+                { url: 'https://i.postimg.cc/wMCt1B2j/Campaing-TZ-Red-12.jpg', label: 'TZ Red 12' },
+                { url: 'https://i.postimg.cc/636CKTjD/Campaign-Shopify-012.jpg', label: 'Shopify 12' },
+                { url: 'https://i.postimg.cc/rpN575Js/Campaign-Shopify-013.jpg', label: 'Shopify 13' },
+                { url: 'https://i.postimg.cc/TP6rktrn/Campaign-Shopify-01gym.jpg', label: 'Shopify Gym' },
+                { url: 'https://i.postimg.cc/Zqx6X6cR/Campaign-Shopify-02.jpg', label: 'Shopify 02' },
+                { url: 'https://i.postimg.cc/PqQ1014P/Campaign-Shopify-03.jpg', label: 'Shopify 03' },
+                { url: 'https://i.postimg.cc/N0kRZR4H/Campaign-Shopify-04.jpg', label: 'Shopify 04' },
+                { url: 'https://i.postimg.cc/YSzQTQ3f/Campaign-Shopify-05.jpg', label: 'Shopify 05' },
+                { url: 'https://i.postimg.cc/257ngnwG/Campaign-Shopify-06.jpg', label: 'Shopify 06' },
+                { url: 'https://i.postimg.cc/TPJnBn94/Campaign-Shopify-07.jpg', label: 'Shopify 07' },
+                { url: 'https://i.postimg.cc/Xvk9t98P/Campaign-Shopify-08.jpg', label: 'Shopify 08' },
+                { url: 'https://i.postimg.cc/QMJcvcbw/Campaign-Shopify-09.jpg', label: 'Shopify 09' },
+                { url: 'https://i.postimg.cc/nzVqxMRd/Campaign-Shopify-10.jpg', label: 'Shopify 10' },
+                { url: 'https://i.postimg.cc/fLWYsk2q/Campaign-Shopify-11.jpg', label: 'Shopify 11' },
+                { url: 'https://i.postimg.cc/0Q57vrWH/Campaign-Shopify-Banner-01.jpg', label: 'Shopify Banner' },
+                { url: 'https://i.postimg.cc/RZ9QSM0Q/Bride-002-Campaign-01.jpg', label: 'Bride Campaign 01' },
+                { url: 'https://i.postimg.cc/K8FrGZY7/Bride-002-Campaign-02.jpg', label: 'Bride Campaign 02' },
+                { url: 'https://i.postimg.cc/rwcCV8p1/Bride-Campaig-01.jpg', label: 'Bride Campaign' },
+                { url: 'https://i.postimg.cc/QdbgVRB0/Campagin-Man-wearing-tailored-trousers.jpg', label: 'Man Tailored 00' },
+                { url: 'https://i.postimg.cc/jSX6CGWc/Campagin-Man-wearing-tailored-trousers-1.jpg', label: 'Man Tailored 01' },
+                { url: 'https://i.postimg.cc/7ZV1bpGx/Campagin-Man-wearing-tailored-trousers-10.jpg', label: 'Man Tailored 10' },
+                { url: 'https://i.postimg.cc/sgcP1tQg/Campagin-Man-wearing-tailored-trousers-11.jpg', label: 'Man Tailored 11' },
+                { url: 'https://i.postimg.cc/521q4xt3/Campagin-Man-wearing-tailored-trousers-2.jpg', label: 'Man Tailored 02' },
+                { url: 'https://i.postimg.cc/sgy9jV2K/Campagin-Man-wearing-tailored-trousers-3.jpg', label: 'Man Tailored 03' },
+                { url: 'https://i.postimg.cc/6pwLW9Qj/Campagin-Man-wearing-tailored-trousers-4.jpg', label: 'Man Tailored 04' },
+                { url: 'https://i.postimg.cc/kg9FJn5p/Campagin-Man-wearing-tailored-trousers-5.jpg', label: 'Man Tailored 05' },
+                { url: 'https://i.postimg.cc/8zHdsqFn/Campagin-Man-wearing-tailored-trousers-7.jpg', label: 'Man Tailored 07' },
+                { url: 'https://i.postimg.cc/2Swd3PbR/Campagin-Man-wearing-tailored-trousers-8.jpg', label: 'Man Tailored 08' },
+                { url: 'https://i.postimg.cc/Jzq3t9DL/Campagin-Man-wearing-tailored-trousers-9.jpg', label: 'Man Tailored 09' },
+                { url: 'https://i.postimg.cc/s2Hp474h/Campaign-Man-s-Clothing-1.jpg', label: 'Men Clothing 01' },
+                { url: 'https://i.postimg.cc/nLh4m0B2/Campaign-Man-s-Clothing-2.jpg', label: 'Men Clothing 02' },
+                { url: 'https://i.postimg.cc/GpmFDqGF/Campaign-Man-s-Clothing-3.jpg', label: 'Men Clothing 03' },
+                { url: 'https://i.postimg.cc/13Pcm9zw/Campaign-Man-s-Clothing-4.jpg', label: 'Men Clothing 04' },
+                { url: 'https://i.postimg.cc/5t2BznL0/Men-s-Campaign-clothing-product-shots-1.jpg', label: 'Campaign Shots 01' },
+                { url: 'https://i.postimg.cc/MpD0XhMT/Men-s-Campaign-clothing-product-shots-2.jpg', label: 'Campaign Shots 02' },
+                { url: 'https://i.postimg.cc/R0Z7tXKH/Men-s-Campaign-clothing-product-shots-3.jpg', label: 'Campaign Shots 03' },
+                { url: 'https://i.postimg.cc/VNkqtDnr/Men-s-Campaign-clothing-product-shots-4.jpg', label: 'Campaign Shots 04' },
+                { url: 'https://i.postimg.cc/q7vsKjyT/Men-s-Campaign-clothing-product-shots-5.jpg', label: 'Campaign Shots 05' },
+                { url: 'https://i.postimg.cc/13H04LnX/Men-s-Campaign-clothing-product-shots-6.jpg', label: 'Campaign Shots 06' },
+                { url: 'https://i.postimg.cc/CKxG8mkk/Men-s-Campaign-clothing-product-shots-7.jpg', label: 'Campaign Shots 07' }
+            ],
+            3: [
+                { url: 'https://i.postimg.cc/xCnYR681/3D-garment-studio-photography-202605260939.jpg', label: '3D Design 01' },
+                { url: 'https://i.postimg.cc/MGyqVCWY/Clo-002.jpg', label: '3D Design 02' },
+                { url: 'https://i.postimg.cc/bvXqGyjb/Clo-01.jpg', label: '3D Design 03' },
+                { url: 'https://i.postimg.cc/0NpPDT8p/Clo-02.jpg', label: '3D Design 04' },
+                { url: 'https://i.postimg.cc/TPrfgzRV/Clo-03.jpg', label: '3D Design 05' },
+                { url: 'https://i.postimg.cc/DzqnL92d/Clo-04.jpg', label: '3D Design 06' },
+                { url: 'https://i.postimg.cc/TPrfgzRj/Clo-05.jpg', label: '3D Design 07' },
+                { url: 'https://i.postimg.cc/Xvw4dRV8/Clo-07.jpg', label: '3D Design 08' },
+                { url: 'https://i.postimg.cc/Bvx4HrqY/Clo-08.jpg', label: '3D Design 09' },
+                { url: 'https://i.postimg.cc/B64sgm6R/Clo-09.jpg', label: '3D Design 10' },
+                { url: 'https://i.postimg.cc/zfn8KsJd/Clo-10.jpg', label: '3D Design 11' },
+                { url: 'https://i.postimg.cc/MGyqVCW5/Clo-11.jpg', label: '3D Design 12' },
+                { url: 'https://i.postimg.cc/rpSMxB8f/Clo-12.jpg', label: '3D Design 13' },
+                { url: 'https://i.postimg.cc/W4MTgB2Y/Clo-13.jpg', label: '3D Design 14' },
+                { url: 'https://i.postimg.cc/tghpWKXf/Clo-14.jpg', label: '3D Design 15' },
+                { url: 'https://i.postimg.cc/s2ps7kV5/Clo-15.jpg', label: '3D Design 16' },
+                { url: 'https://i.postimg.cc/TP8TydXb/Clo-16.jpg', label: '3D Design 17' },
+                { url: 'https://i.postimg.cc/JhwRyrWk/Clo-17.jpg', label: '3D Design 18' },
+                { url: 'https://i.postimg.cc/CKywZhVk/Clo-18.jpg', label: '3D Design 19' },
+                { url: 'https://i.postimg.cc/FRNmZTRB/Clo-19.jpg', label: '3D Design 20' },
+                { url: 'https://i.postimg.cc/8ChNM21r/Clo-20.jpg', label: '3D Design 21' },
+                { url: 'https://i.postimg.cc/DzqnL924/Clo-21.jpg', label: '3D Design 22' },
+                { url: 'https://i.postimg.cc/bvQpk7zD/Clo-22.jpg', label: '3D Design 23' },
+                { url: 'https://i.postimg.cc/C1SYNc1r/Clo-23.jpg', label: '3D Design 24' },
+                { url: 'https://i.postimg.cc/sXsycTXm/Clo-24.jpg', label: '3D Design 25' },
+                { url: 'https://i.postimg.cc/76wDVK6V/Clo-25.jpg', label: '3D Design 26' },
+                { url: 'https://i.postimg.cc/SKWkCByM/Clo-26.jpg', label: '3D Design 27' },
+                { url: 'https://i.postimg.cc/gJmdDgJ7/Fabric-texture-with-visible-weave-202605261017.jpg', label: '3D Design 28' }
+            ]
+        };
+
+        /* ============================================
+           BUILD BENTO GRID
+           ============================================ */
+        function buildBentoGrid(campaignNum) {
+            var grid = document.getElementById('bento-grid-' + campaignNum);
+            grid.innerHTML = '';
+            var items = campaignData[campaignNum];
+            var totalItems = items.length;
+            for (var i = 0; i < totalItems; i++) {
+                var item = items[i];
+                var sizeClass = bentoSizes[i % bentoSizes.length];
+                var div = document.createElement('div');
+                div.className = 'bento-item ' + sizeClass;
+                div.setAttribute('data-index', i);
+                div.setAttribute('data-campaign', campaignNum);
+                div.innerHTML = '<img src="' + item.url + '" alt="' + item.label + '" loading="lazy"><div class="bento-overlay"><span class="bento-overlay-text">' + item.label + '</span></div>';
+                div.addEventListener('click', function() {
+                    var c = parseInt(this.getAttribute('data-campaign'));
+                    var idx = parseInt(this.getAttribute('data-index'));
+                    openLightbox(c, idx);
+                });
+                grid.appendChild(div);
+            }
+        }
+
+        buildBentoGrid(1); buildBentoGrid(2); buildBentoGrid(3);
+
+        /* ============================================
+           CAMPAIGN SWITCHING
+           ============================================ */
+        var currentCampaign = 1;
+        function switchCampaign(num) {
+            currentCampaign = num;
+            document.querySelectorAll('.campaign-tab').forEach(function(tab) { tab.classList.toggle('active', parseInt(tab.getAttribute('data-campaign')) === num); });
+            document.querySelectorAll('.campaign-panel').forEach(function(panel) { panel.classList.remove('active'); });
+            var targetPanel = document.getElementById('campaign-' + num);
+            targetPanel.classList.add('active');
+            var items = targetPanel.querySelectorAll('.bento-item');
+            items.forEach(function(item, idx) {
+                item.style.opacity = '0'; item.style.transform = 'translateY(20px)'; item.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'; item.style.transitionDelay = (idx * 0.02) + 's';
+                setTimeout(function() { item.style.opacity = '1'; item.style.transform = 'translateY(0)'; }, 50);
+            });
+        }
+
+        /* ============================================
+           LIGHTBOX
+           ============================================ */
+        var lightbox = document.getElementById('lightbox');
+        var lightboxImg = document.getElementById('lightbox-img');
+        var currentLightboxIndex = 0;
+        var currentLightboxCampaign = 1;
+
+        function openLightbox(campaign, index) {
+            currentLightboxCampaign = campaign; currentLightboxIndex = index; updateLightboxImage(); lightbox.classList.add('open'); document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+        function updateLightboxImage() { var item = campaignData[currentLightboxCampaign][currentLightboxIndex]; lightboxImg.src = item.url; lightboxImg.alt = item.label; }
+        function navigateLightbox(direction) { var items = campaignData[currentLightboxCampaign]; currentLightboxIndex = (currentLightboxIndex + direction + items.length) % items.length; updateLightboxImage(); }
+
+        lightbox.addEventListener('click', function(e) { if (e.target === lightbox || e.target.classList.contains('lightbox-content')) closeLightbox(); });
+        document.addEventListener('keydown', function(e) { if (!lightbox.classList.contains('open')) return; if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowLeft') navigateLightbox(-1); if (e.key === 'ArrowRight') navigateLightbox(1); });
+
+        /* ============================================
+           BUILD NAV LINKS
+           ============================================ */
+        (function buildNavLinks() {
+            var links = [
+                { href: 'index.html', label: translations[currentLang].nav_home },
+                { href: 'services.html', label: translations[currentLang].nav_services },
+                { href: 'portfolio.html', label: translations[currentLang].nav_gallery },
+                { href: 'contact.html', label: translations[currentLang].nav_contact }
+            ];
+            var ul = document.getElementById('navLinks'); ul.innerHTML = '';
+            links.forEach(function(link, idx) {
+                var li = document.createElement('li'); var a = document.createElement('a');
+                a.href = link.href; a.textContent = link.label;
+                if (idx === 0) a.classList.add('active-link');
+                a.addEventListener('click', function() { document.querySelectorAll('.nav-links a').forEach(function(navA) { navA.classList.remove('active-link'); }); a.classList.add('active-link'); });
+                li.appendChild(a); ul.appendChild(li);
+            });
+        })();
+    </script>
+</body>
+</html>
+

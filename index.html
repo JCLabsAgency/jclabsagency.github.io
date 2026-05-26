@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JC Labs — Portfolio</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/W3r06wPf/JCLabs-favicon-03-02.png">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/300.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/400.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/500.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/600.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/700.min.css" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ============================================
+           VARIABLES / CUSTOM PROPERTIES
+           ============================================ */
+        :root {
+            --black: #0a0a0a; --white: #ffffff; --gray-100: #f5f5f5; --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4; --gray-400: #a3a3a3; --gray-500: #737373; --gray-600: #525252;
+            --gray-700: #404040; --gray-800: #262626; --gray-900: #171717;
+            --accent: #6366f1; --accent-light: #818cf8; --accent-dark: #4f46e5;
+            --font-heading: 'Jost', sans-serif; --font-body: 'Jost', sans-serif;
+            --cursor-size: 20px;
+        }
+
+        /* ============================================
+           HTML / BODY
+           ============================================ */
+        html { scroll-behavior: smooth; font-size: 16px; }
+
+        body {
+            font-family: var(--font-body); font-weight: 400; background: var(--black); color: var(--white);
+            line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+            cursor: none;
+        }
+
+        /* ============================================
+           CUSTOM CURSOR
+           ============================================ */
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+            background: var(--white); border-radius: 50%; pointer-events: none;
+            z-index: 10000; mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+        .cursor-ring {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            border: 1.5px solid rgba(255,255,255,0.5); border-radius: 50%;
+            pointer-events: none; z-index: 10000; mix-blend-mode: difference;
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+        }
+        .cursor-ring.hover { width: 60px; height: 60px; border-color: var(--accent); }
+        .cursor-ring.click { width: 30px; height: 30px; }
+
+        /* ============================================
+           PAGE LOADER
+           ============================================ */
+        .page-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--black); z-index: 9999; display: flex;
+            align-items: center; justify-content: center; flex-direction: column;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .page-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-logo {
+            font-family: var(--font-heading); font-size: 48px; font-weight: 700;
+            letter-spacing: 8px; color: var(--white);
+            opacity: 0; animation: loaderFadeIn 1s ease forwards;
+        }
+        .loader-bar {
+            width: 200px; height: 2px; background: var(--gray-800);
+            margin-top: 24px; border-radius: 2px; overflow: hidden;
+            opacity: 0; animation: loaderFadeIn 1s ease 0.3s forwards;
+        }
+        .loader-bar-fill {
+            height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            width: 0%; animation: loaderFill 2s ease 0.5s forwards;
+        }
+        @keyframes loaderFadeIn { to { opacity: 1; } }
+        @keyframes loaderFill { to { width: 100%; } }
+
+        /* ============================================
+           KEYFRAMES & ANIMATIONS
+           ============================================ */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes textReveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+        @keyframes borderGlow { 
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.1); }
+            50% { box-shadow: 0 0 40px 8px rgba(99, 102, 241, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.1); }
+        }
+        @keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes glassShimmer { 
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-40%, -40%) rotate(5deg); } 
+        }
+
+        /* ============================================
+           ANIMATED GRADIENT BACKGROUND
+           ============================================ */
+        .gradient-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(-45deg, #0a0a0a, #111827, #0f172a, #1e1b4b);
+            background-size: 400% 400%; animation: gradientMove 15s ease infinite;
+        }
+
+        /* ============================================
+           INFINITE MARQUEE
+           ============================================ */
+        .marquee-section {
+            padding: 20px 0; overflow: hidden; border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02);
+        }
+        .marquee-track {
+            display: flex; width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee-item {
+            font-family: var(--font-heading); font-size: 14px; font-weight: 500;
+            letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.3);
+            padding: 0 40px; white-space: nowrap;
+        }
+        .marquee-item span { color: var(--accent); margin: 0 8px; }
+
+        /* ============================================
+           NAVIGATION MENU BAR - GLASSMORPHISM
+           ============================================ */
+        .nav-container {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-nav {
+            display: flex; align-items: center; padding: 12px 28px; margin-top: 20px; border-radius: 60px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
+            -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-top: 1px solid rgba(255, 255, 255, 0.35);
+            border-left: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+        .glass-nav::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+            border-radius: 60px 60px 0 0; pointer-events: none; z-index: 0;
+        }
+        .glass-nav::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none; z-index: 0; animation: glassShimmer 8s ease-in-out infinite;
+        }
+        .nav-container.scrolled .glass-nav {
+            margin-top: 10px; padding: 10px 28px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(50px) saturate(250%) brightness(1.05);
+            -webkit-backdrop-filter: blur(50px) saturate(250%) brightness(1.05);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .nav-container.scrolled .glass-nav::before {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+        }
+
+        /* ============================================
+           NAVIGATION LOGO
+           ============================================ */
+        .logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; position: relative; z-index: 1; }
+        .logo img { height: 36px; width: auto; filter: brightness(0) invert(1); transition: filter 0.4s ease; }
+        .nav-container.scrolled .glass-nav .logo img { filter: brightness(0) saturate(1) invert(0); }
+
+        /* ============================================
+           NAVIGATION LINKS
+           ============================================ */
+        .nav-links-wrapper { flex: 1; display: flex; justify-content: center; position: relative; z-index: 1; }
+        .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav-links a {
+            color: rgba(255,255,255,0.7); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px;
+            transition: all 0.3s ease; position: relative; cursor: none;
+        }
+        .nav-container.scrolled .glass-nav .nav-links a { color: var(--gray-700); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px;
+            background: var(--accent); transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-container.scrolled .glass-nav .nav-links a:hover { color: var(--black); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active-link { color: var(--white); }
+        .nav-container.scrolled .glass-nav .nav-links a.active-link { color: var(--black); }
+        .nav-links a.active-link::after { width: 100%; }
+
+        /* ============================================
+           LANGUAGE TOGGLE
+           ============================================ */
+        .lang-toggle {
+            display: flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px; padding: 4px; border: 1px solid rgba(255, 255, 255, 0.15);
+            flex-shrink: 0; position: relative; overflow: hidden; z-index: 1;
+        }
+        .nav-container.scrolled .glass-nav .lang-toggle {
+            background: rgba(255, 255, 255, 0.5); border-color: rgba(0, 0, 0, 0.08);
+        }
+        .lang-btn {
+            padding: 6px 16px; border: none; background: transparent; color: rgba(255,255,255,0.6);
+            font-family: var(--font-body); font-size: 12px; font-weight: 600; letter-spacing: 1px;
+            cursor: none; border-radius: 26px; transition: all 0.3s ease; text-transform: uppercase; position: relative; z-index: 1;
+        }
+        .nav-container.scrolled .glass-nav .lang-btn { color: var(--gray-500); }
+        .lang-btn.active { 
+            background: var(--black); color: var(--white); 
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+        .nav-container.scrolled .glass-nav .lang-btn.active {
+            background: var(--black); color: var(--white);
+        }
+
+        /* ============================================
+           MOBILE MENU TOGGLE BUTTON
+           ============================================ */
+        .mobile-toggle {
+            display: none; flex-direction: column; gap: 5px; cursor: none; padding: 8px;
+            background: none; border: none; z-index: 1002; flex-shrink: 0; position: relative;
+        }
+        .mobile-toggle span { width: 24px; height: 1.5px; background: var(--white); transition: all 0.3s ease; transform-origin: center; }
+        .nav-container.scrolled .glass-nav .mobile-toggle span { background: var(--black); }
+        .mobile-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-toggle.open span:nth-child(2) { opacity: 0; }
+        .mobile-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* ============================================
+           MOBILE MENU OVERLAY
+           ============================================ */
+        .mobile-menu-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px); z-index: 999; flex-direction: column;
+            justify-content: center; align-items: center; gap: 36px; opacity: 0; transition: opacity 0.4s ease;
+        }
+        .mobile-menu-overlay.open { display: flex; opacity: 1; }
+        .mobile-menu-overlay a {
+            color: var(--white); text-decoration: none; font-family: var(--font-heading);
+            font-size: 32px; font-weight: 300; letter-spacing: 4px; text-transform: uppercase;
+            opacity: 0; transform: translateY(20px); transition: all 0.4s ease;
+        }
+        .mobile-menu-overlay.open a { opacity: 1; transform: translateY(0); }
+        .mobile-menu-overlay.open a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu-overlay.open a:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-menu-overlay.open a:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-menu-overlay.open a:nth-child(4) { transition-delay: 0.25s; }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            position: relative; min-height: 100vh; min-height: 100dvh; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .hero-bg { 
+            position: absolute; top: -10%; left: 0; width: 100%; height: 120%; z-index: 0; 
+            will-change: transform;
+        }
+        .hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6) contrast(1.1); }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.8) 100%);
+        }
+        .hero-grain {
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; z-index: 1;
+            opacity: 0.03; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; max-width: 900px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px;
+            font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--accent-light); margin-bottom: 32px;
+            animation: fadeUp 0.8s ease 0.5s both;
+        }
+        .hero-badge-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease infinite; }
+        .hero-title {
+            font-family: var(--font-heading); font-size: clamp(32px, 5.5vw, 80px); font-weight: 300; color: var(--white);
+            letter-spacing: clamp(1px, 0.5vw, 4px); text-transform: uppercase; line-height: 1.05; margin-bottom: 24px;
+            animation: fadeUp 0.8s ease 0.7s both;
+        }
+        .hero-title strong { font-weight: 700; background: linear-gradient(135deg, var(--white) 0%, var(--accent-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle {
+            font-family: var(--font-body); font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.6);
+            letter-spacing: 0.5px; font-weight: 300; margin-bottom: 48px; line-height: 1.7; max-width: 600px; margin-left: auto; margin-right: auto;
+            animation: fadeUp 0.8s ease 0.9s both;
+        }
+        .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.8s ease 1.1s both; }
+
+        /* ============================================
+           MAGNETIC BUTTONS
+           ============================================ */
+        .btn-magnetic {
+            position: relative; padding: 16px 40px; border-radius: 50px;
+            font-family: var(--font-body); font-size: 14px; font-weight: 600; letter-spacing: 1px;
+            cursor: none; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+            overflow: hidden;
+        }
+        .btn-magnetic::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            opacity: 0; transition: opacity 0.4s ease; border-radius: 50px;
+        }
+        .btn-magnetic:hover::before { opacity: 1; }
+        .btn-magnetic span, .btn-magnetic svg { position: relative; z-index: 1; }
+        
+        .btn-primary-mag { background: var(--white); color: var(--black); border: none; }
+        .btn-primary-mag:hover { color: var(--white); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(99, 102, 241, 0.3); }
+        
+        .btn-outline-mag { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-outline-mag:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2); }
+
+        /* ============================================
+           GENERAL SECTION STYLES
+           ============================================ */
+        section { padding: 120px 40px; position: relative; }
+        .section-container { max-width: 1200px; margin: 0 auto; }
+        .section-label {
+            font-family: var(--font-heading); font-size: 11px; font-weight: 600; letter-spacing: 4px;
+            text-transform: uppercase; color: var(--accent); margin-bottom: 20px;
+            display: inline-flex; align-items: center; gap: 12px;
+        }
+        .section-label::before { content: ''; width: 30px; height: 1px; background: var(--accent); }
+        .section-title {
+            font-family: var(--font-heading); font-size: clamp(32px, 4vw, 56px); font-weight: 300;
+            color: var(--white); line-height: 1.15; margin-bottom: 24px; letter-spacing: -0.5px;
+        }
+        .section-title strong { font-weight: 700; }
+        .section-desc { font-size: 16px; font-weight: 300; color: var(--gray-400); line-height: 1.8; max-width: 560px; }
+
+        /* ============================================
+           HERO TEXTUAL SECTION (Visual Design & AI)
+           ============================================ */
+        .hero-textual {
+            background: var(--black); padding: 140px 40px; position: relative; overflow: hidden;
+        }
+        .hero-textual::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 80px; background: linear-gradient(180deg, var(--accent), transparent);
+        }
+        .hero-textual-container { max-width: 1200px; margin: 0 auto; position: relative; }
+        .hero-textual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .hero-textual-left { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 28px; }
+        .hero-textual-tag {
+            font-family: var(--font-heading); font-weight: 500; font-size: 13px; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--accent);
+            display: inline-flex; align-items: center; gap: 10px;
+        }
+        .hero-textual-tag::before { content: ''; width: 24px; height: 2px; background: var(--accent); border-radius: 2px; }
+        .hero-textual-title {
+            font-family: var(--font-heading); font-weight: 400; font-size: clamp(32px, 4vw, 52px);
+            color: var(--white); line-height: 1.15; letter-spacing: -0.5px;
+        }
+        .hero-textual-title em {
+            font-style: italic; font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-textual-desc {
+            font-family: var(--font-heading); font-weight: 300; font-size: clamp(14px, 1.4vw, 17px);
+            color: var(--gray-400); line-height: 1.85; max-width: 520px;
+        }
+        .hero-textual-card {
+            position: relative; border-radius: 24px; overflow: hidden; aspect-ratio: 4/5;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+        .hero-textual-card img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hero-textual-card:hover img { transform: scale(1.04); }
+        .hero-textual-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(180deg, transparent 0%, rgba(10, 10, 10, 0.6) 100%);
+            pointer-events: none;
+        }
+        .hero-textual-card-badge {
+            position: absolute; bottom: 24px; left: 24px; z-index: 2;
+            font-family: var(--font-heading); font-size: 11px; font-weight: 500; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--white);
+            background: rgba(99, 102, 241, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 8px 18px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* ============================================
+           METHODOLOGY SECTION (White Background)
+           ============================================ */
+        .methodology {
+            background: #ffffff; padding: 140px 40px; position: relative; overflow: hidden;
+        }
+        .methodology::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 80px; background: linear-gradient(180deg, var(--accent), transparent);
+        }
+        .methodology-container { max-width: 1200px; margin: 0 auto; position: relative; }
+        .methodology-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .methodology-left { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 28px; }
+        .methodology-tag {
+            font-family: var(--font-heading); font-weight: 500; font-size: 13px; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--accent);
+            display: inline-flex; align-items: center; gap: 10px;
+        }
+        .methodology-tag::before { content: ''; width: 24px; height: 2px; background: var(--accent); border-radius: 2px; }
+        .methodology-title {
+            font-family: var(--font-heading); font-weight: 400; font-size: clamp(32px, 4vw, 52px);
+            color: var(--black); line-height: 1.15; letter-spacing: -0.5px;
+        }
+        .methodology-title em {
+            font-style: italic; font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .methodology-desc {
+            font-family: var(--font-heading); font-weight: 300; font-size: clamp(14px, 1.4vw, 17px);
+            color: var(--gray-500); line-height: 1.85; max-width: 520px;
+        }
+        .methodology-card {
+            position: relative; border-radius: 24px; overflow: hidden; aspect-ratio: 4/5;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
+        }
+        .methodology-card img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .methodology-card:hover img { transform: scale(1.04); }
+        .methodology-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(180deg, transparent 0%, rgba(10, 10, 10, 0.35) 100%);
+            pointer-events: none;
+        }
+        .methodology-card-badge {
+            position: absolute; bottom: 24px; left: 24px; z-index: 2;
+            font-family: var(--font-heading); font-size: 11px; font-weight: 500; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--white);
+            background: rgba(99, 102, 241, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 8px 18px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* ============================================
+           PROJECTS / SUCCESS CASE SECTION
+           ============================================ */
+        .success-case { 
+            background: var(--black); position: relative;
+        }
+        .success-case::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 80px; background: linear-gradient(180deg, var(--accent), transparent);
+        }
+        .success-case-container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+        .success-case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .success-case-content { padding-top: 20px; }
+        .success-case-left { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 28px; }
+        .success-case-title {
+            font-family: var(--font-heading); font-size: clamp(32px, 4vw, 52px); font-weight: 400; line-height: 1.15;
+            color: var(--white); letter-spacing: -0.5px; margin: 0;
+        }
+        .success-case-title em {
+            font-style: italic; font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .success-case-description { font-size: clamp(14px, 1.4vw, 17px); line-height: 1.85; color: var(--gray-400); font-weight: 300; max-width: 520px; }
+        .metrics-container { display: flex; gap: 48px; align-items: flex-start; }
+        .metric-item { display: flex; flex-direction: column; gap: 6px; }
+        .metric-number {
+            font-family: var(--font-heading); font-size: 36px; font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), var(--white));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .metric-label { font-size: 13px; font-weight: 400; color: var(--gray-500); letter-spacing: 0.5px; }
+        .case-study { 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 32px;
+        }
+        .case-study-title { font-family: var(--font-heading); font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 20px; }
+        .case-study-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+        .case-study-list li {
+            font-size: 14px; line-height: 1.6; color: var(--gray-400); padding-left: 20px; position: relative;
+        }
+        .case-study-list li::before {
+            content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px;
+            background: var(--accent); border-radius: 50%;
+        }
+        .case-study-list li strong { font-weight: 600; color: var(--white); }
+        .success-case-visual { display: flex; gap: 4px; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05); }
+        .before-after-panel { flex: 1; position: relative; overflow: hidden; }
+        .before-after-panel img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .success-case-visual:hover .before-after-panel img { transform: scale(1.04); }
+        .before-after-badge {
+            position: absolute; top: 16px; background: rgba(99, 102, 241, 0.85); backdrop-filter: blur(10px);
+            color: var(--white); padding: 8px 18px; border-radius: 30px; font-family: var(--font-heading);
+            font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; z-index: 2;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .badge-before { left: 16px; }
+        .badge-after { right: 16px; }
+
+        /* ============================================
+           SERVICES SECTION (White Background)
+           ============================================ */
+        .services-grid { 
+            background: #ffffff; position: relative; 
+        }
+        .services-grid::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .services-grid-container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+        .services-grid-title {
+            font-family: var(--font-heading); font-size: clamp(36px, 4vw, 56px); font-weight: 300;
+            color: var(--black); text-align: center; margin-bottom: 60px; letter-spacing: -1px;
+        }
+        .services-grid-title strong { font-weight: 700; }
+        .services-grid-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .service-card {
+            background: #ffffff; border: 1px solid var(--gray-200);
+            border-radius: 16px; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; cursor: none; position: relative;
+        }
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
+            opacity: 0; transition: opacity 0.4s ease; border-radius: 16px; pointer-events: none;
+        }
+        .service-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15); }
+        .service-card:hover::before { opacity: 1; }
+        .service-card-image { width: 100%; aspect-ratio: 16/10; overflow: hidden; }
+        .service-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .service-card:hover .service-card-image img { transform: scale(1.08); }
+        .service-card-content { padding: 28px 24px; flex: 1; display: flex; flex-direction: column; }
+        .service-card-number { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 2px; margin-bottom: 12px; }
+        .service-card-title { font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--black); line-height: 1.3; margin-bottom: 12px; }
+        .service-card-description { font-size: 14px; line-height: 1.7; color: var(--gray-500); margin-bottom: 24px; flex: 1; }
+        .service-card-footer {
+            display: flex; align-items: center; justify-content: space-between; padding-top: 20px;
+            border-top: 1px solid var(--gray-200); text-decoration: none; cursor: none; transition: all 0.3s ease;
+        }
+        .service-card-footer:hover { opacity: 0.7; }
+        .service-card-footer span { font-family: var(--font-heading); font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: 0.5px; }
+        .service-card-footer svg { width: 16px; height: 16px; color: var(--accent); transition: transform 0.3s ease; }
+        .service-card-footer:hover svg { transform: translateX(4px); }
+
+        /* ============================================
+           ABOUT SECTION
+           ============================================ */
+        .about { background: var(--black); position: relative; overflow: hidden; }
+        .about::before {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 40%;
+            background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.03));
+            pointer-events: none;
+        }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; z-index: 1; }
+        .about-image {
+            border-radius: 20px; overflow: hidden; aspect-ratio: 4/5; position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+        .about-image::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, transparent 60%, rgba(99, 102, 241, 0.1) 100%);
+            pointer-events: none;
+        }
+        .about-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .about-image:hover img { transform: scale(1.03); }
+        .about-text p { font-size: 16px; font-weight: 300; color: var(--gray-400); line-height: 1.8; margin-bottom: 20px; }
+        .about-skills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+        .skill-tag {
+            padding: 8px 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px; font-size: 12px; font-weight: 500; color: var(--gray-300);
+            transition: all 0.3s ease; cursor: none;
+        }
+        .skill-tag:hover { background: rgba(99, 102, 241, 0.1); border-color: var(--accent); color: var(--accent-light); }
+
+        /* ============================================
+           CTA BANNER SECTION
+           ============================================ */
+        .cta-banner-section {
+            position: relative; width: 100%; min-height: 500px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; background: #0f172a;
+        }
+        .cta-banner-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .cta-banner-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.3; filter: brightness(0.4); }
+        .cta-banner-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+            background: linear-gradient(180deg, var(--black) 0%, rgba(15, 23, 42, 0.8) 30%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.8) 70%, var(--black) 100%);
+        }
+        .cta-banner-content {
+            position: relative; z-index: 3; text-align: center; max-width: 750px; padding: 80px 40px;
+            opacity: 0; transform: translateY(30px); transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cta-banner-content.visible { opacity: 1; transform: translateY(0); }
+        .cta-banner-label {
+            font-family: var(--font-heading); font-weight: 500; font-size: 11px; letter-spacing: 4px;
+            text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: inline-block; position: relative;
+        }
+        .cta-banner-label::before, .cta-banner-label::after {
+            content: ''; position: absolute; top: 50%; width: 40px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent));
+        }
+        .cta-banner-label::before { right: calc(100% + 16px); }
+        .cta-banner-label::after { left: calc(100% + 16px); background: linear-gradient(90deg, var(--accent), transparent); }
+        .cta-banner-title {
+            font-family: var(--font-heading); font-weight: 300; font-size: clamp(26px, 3.5vw, 44px);
+            color: var(--white); line-height: 1.3; margin-bottom: 24px; letter-spacing: -0.3px;
+        }
+        .cta-banner-title strong { font-weight: 700; }
+        .cta-banner-divider { width: 50px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); margin: 0 auto 24px; }
+        .cta-banner-text {
+            font-family: var(--font-heading); font-weight: 300; font-size: clamp(15px, 1.5vw, 18px);
+            color: var(--gray-400); line-height: 1.7; margin-bottom: 48px; max-width: 600px; margin-left: auto; margin-right: auto;
+        }
+        .cta-banner-button {
+            display: inline-flex; align-items: center; gap: 10px; padding: 16px 44px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: var(--white);
+            border: none; border-radius: 50px; font-family: var(--font-heading); font-weight: 600; font-size: 15px;
+            letter-spacing: 1px; cursor: none; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none; text-transform: uppercase; position: relative; overflow: hidden;
+        }
+        .cta-banner-button::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        .cta-banner-button:hover::before { left: 100%; }
+        .cta-banner-button:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(99, 102, 241, 0.4); }
+        .cta-banner-button svg { width: 16px; height: 16px; transition: transform 0.3s ease; }
+        .cta-banner-button:hover svg { transform: translateX(4px); }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer { padding: 40px; border-top: 1px solid rgba(255,255,255,0.06); background: var(--black); }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .footer-copy { font-size: 13px; font-weight: 400; color: var(--gray-500); }
+        .footer-social { display: flex; gap: 16px; }
+        .footer-social a {
+            color: var(--gray-500); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); cursor: none;
+        }
+        .footer-social a:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(99, 102, 241, 0.1); transform: translateY(-2px); }
+        .footer-tagline { font-size: 13px; font-weight: 300; color: var(--gray-600); font-style: italic; }
+
+        /* ============================================
+           SCROLL REVEAL ANIMATIONS
+           ============================================ */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-left { opacity: 0; transform: translateX(-40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-left.visible { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+        .reveal-scale { opacity: 0; transform: scale(0.95); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+        /* ============================================
+           STAGGER DELAYS
+           ============================================ */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 1024px) {
+            section { padding: 80px 32px; } .nav-container { padding: 0 24px; }
+            .about-grid { gap: 48px; } .success-case-grid { gap: 48px; }
+            .services-grid-row { grid-template-columns: repeat(2, 1fr); }
+            .hero-textual-grid { gap: 48px; }
+            .methodology-grid { gap: 48px; }
+        }
+
+        @media (max-width: 767px) {
+            html { font-size: 15px; } section { padding: 60px 20px; }
+            .nav-container { padding: 0 16px; top: 12px; left: 12px; right: 12px; }
+            .glass-nav { padding: 12px 20px; margin-top: 0; }
+            .nav-container.scrolled .glass-nav { margin-top: 0; }
+            .mobile-toggle { display: flex; }
+            .logo { margin-left: 20px; } .logo img { height: 28px; }
+            .nav-links-wrapper { display: none !important; } .lang-toggle { margin-left: auto; }
+            .hero-content { padding: 0 20px; }
+            .hero-ctas { flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 280px; margin: 0 auto; }
+            .btn-magnetic { width: 100%; justify-content: center; }
+            .success-case-grid { grid-template-columns: 1fr; gap: 40px; }
+            .success-case-left { align-items: center; text-align: center; }
+            .metrics-container { flex-wrap: wrap; gap: 32px; }
+            .metric-number { font-size: 28px; }
+            .services-grid-row { grid-template-columns: 1fr; }
+            .about-grid { grid-template-columns: 1fr; gap: 32px; }
+            .about-image { max-width: 400px; margin: 0 auto; }
+            .footer-content { flex-direction: column; text-align: center; }
+            .cta-banner-section { min-height: 440px; }
+            .cursor-dot, .cursor-ring { display: none; }
+            body { cursor: auto; }
+            .btn-magnetic, .lang-btn, .nav-links a, .service-card-footer, .skill-tag, .footer-social a, .cta-banner-button { cursor: pointer; }
+            .hero-textual-grid { grid-template-columns: 1fr; gap: 40px; }
+            .hero-textual-left { align-items: center; text-align: center; }
+            .hero-textual-desc { max-width: 100%; }
+            .hero-textual-tag { justify-content: center; }
+            .hero-textual-card { max-width: 400px; margin: 0 auto; }
+            .methodology-grid { grid-template-columns: 1fr; gap: 40px; }
+            .methodology-left { align-items: center; text-align: center; }
+            .methodology-desc { max-width: 100%; }
+            .methodology-tag { justify-content: center; }
+            .methodology-card { max-width: 400px; margin: 0 auto; }
+        }
+
+        @media (max-width: 400px) {
+            section { padding: 48px 16px; }
+            .hero-title { font-size: 28px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+            .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         CUSTOM CURSOR
+         ============================================ -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- ============================================
+         PAGE LOADER
+         ============================================ -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-logo">JC LABS</div>
+        <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+
+    <!-- ============================================
+         ANIMATED GRADIENT BACKGROUND
+         ============================================ -->
+    <div class="gradient-bg"></div>
+
+    <!-- ============================================
+         NAVIGATION MENU BAR
+         ============================================ -->
+    <nav class="nav-container" id="navbar">
+        <div class="glass-nav">
+            <button class="mobile-toggle" id="mobileToggle" onclick="toggleMobile()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="index.html" class="logo"><img src="https://i.postimg.cc/3wSN81fy/JC-Labs-Logo.png" alt="JC Labs"></a>
+            <div class="nav-links-wrapper">
+                <ul class="nav-links">
+                    <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+                    <li><a href="services.html" data-i18n="nav_services">Services</a></li>
+                    <li><a href="portfolio.html" data-i18n="nav_portfolio">Portfolio</a></li>
+                    <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+                <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+         MOBILE MENU OVERLAY
+         ============================================ -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <a href="index.html" data-i18n="nav_home">Home</a>
+        <a href="services.html" data-i18n="nav_services">Services</a>
+        <a href="portfolio.html" data-i18n="nav_portfolio">Portfolio</a>
+        <a href="contact.html" data-i18n="nav_contact">Contact</a>
+    </div>
+
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="hero" id="hero">
+        <div class="hero-bg" id="heroBg"><img src="https://i.postimg.cc/sxRszfZx/Hero-Section-01.jpg" alt="JC Labs"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-grain"></div>
+        <div class="hero-content">
+            <div class="hero-badge"><span class="hero-badge-dot"></span> AI-Powered Creative Studio</div>
+            <h1 class="hero-title" data-i18n="hero_title">Virtual Models &<br><strong>Premium Images</strong><br>for Fashion Brands</h1>
+            <p class="hero-subtitle" data-i18n="hero_subtitle">I create AI-powered content, campaigns, and visual systems for e-commerce, fashion, and brands that need a modern, powerful, and professional image.</p>
+            <div class="hero-ctas">
+                <a href="portfolio.html" class="btn-magnetic btn-primary-mag"><span data-i18n="hero_cta1">View Work</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
+                <a href="contact.html" class="btn-magnetic btn-outline-mag"><span data-i18n="hero_cta2">Contact</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         INFINITE MARQUEE
+         ============================================ -->
+    <div class="marquee-section">
+        <div class="marquee-track">
+            <span class="marquee-item">AI Models <span>✦</span></span>
+            <span class="marquee-item">3D Fashion <span>✦</span></span>
+            <span class="marquee-item">E-commerce <span>✦</span></span>
+            <span class="marquee-item">Social Media <span>✦</span></span>
+            <span class="marquee-item">Brand Identity <span>✦</span></span>
+            <span class="marquee-item">CLO 3D <span>✦</span></span>
+            <span class="marquee-item">Digital Design <span>✦</span></span>
+            <span class="marquee-item">AI Campaigns <span>✦</span></span>
+            <span class="marquee-item">AI Models <span>✦</span></span>
+            <span class="marquee-item">3D Fashion <span>✦</span></span>
+            <span class="marquee-item">E-commerce <span>✦</span></span>
+            <span class="marquee-item">Social Media <span>✦</span></span>
+            <span class="marquee-item">Brand Identity <span>✦</span></span>
+            <span class="marquee-item">CLO 3D <span>✦</span></span>
+            <span class="marquee-item">Digital Design <span>✦</span></span>
+            <span class="marquee-item">AI Campaigns <span>✦</span></span>
+        </div>
+    </div>
+
+    <!-- ============================================
+         HERO TEXTUAL SECTION
+         ============================================ -->
+    <section class="hero-textual" id="hero-textual">
+        <div class="hero-textual-container">
+            <div class="hero-textual-grid">
+                <div class="hero-textual-left reveal-left">
+                    <span class="hero-textual-tag" data-i18n="ht_tag">Visual Design & AI for E-commerce</span>
+                    <h1 class="hero-textual-title" data-i18n="ht_title">We create the <em>images</em> that drive your sales.</h1>
+                    <p class="hero-textual-desc" data-i18n="ht_desc">I specialize in AI image generation and brand design. I help online stores and agencies transform their traditional catalog into premium visual content with high impact for Shopify. If you're looking to optimize your advertising campaign conversion and scale your business without the costs of traditional photography, let's design a unique visual identity together.</p>
+                </div>
+                <div class="hero-textual-right reveal-right">
+                    <div class="hero-textual-card">
+                        <img src="https://i.postimg.cc/T1zyKP9F/Campaing-TZ-Red-02.jpg" alt="Campaña visual premium JC Labs">
+                        <span class="hero-textual-card-badge">AI Campaign</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         METHODOLOGY SECTION
+         ============================================ -->
+    <section class="methodology" id="methodology">
+        <div class="methodology-container">
+            <div class="methodology-grid">
+                <div class="methodology-left reveal-left">
+                    <span class="methodology-tag" data-i18n="met_tag">Agile Work Methodology</span>
+                    <h2 class="methodology-title" data-i18n="met_title">From idea to final art in <em>record time</em></h2>
+                    <p class="methodology-desc" data-i18n="met_desc">My specialized workflow combines human creative direction with advanced generative AI tools. I follow a structured process to optimize delivery times: from the initial creative briefing and iterative concept generation, to artistic refinement and delivery of optimized files for web or advertising implementation.</p>
+                </div>
+                <div class="methodology-right reveal-right">
+                    <div class="methodology-card">
+                        <img src="https://i.postimg.cc/wBzX1FFN/Services-03.jpg" alt="Metodología de trabajo JC Labs">
+                        <span class="methodology-card-badge">Creative Process</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         PROJECTS SECTION
+         ============================================ -->
+    <section class="success-case" id="success-case">
+        <div class="success-case-container">
+            <div class="success-case-grid">
+                <div class="success-case-content reveal-left">
+                    <div class="success-case-left">
+                        <span class="hero-textual-tag" data-i18n="nav_portfolio">Portfolio</span>
+                        <h2 class="success-case-title" data-i18n="sc_title">A strong image can <em>transform</em> a brand completely.</h2>
+                        <p class="success-case-description" data-i18n="sc_desc">I help brands generate impact and position themselves with scalable visuals and content designed to convert.</p>
+                    </div>
+                    <div class="metrics-container">
+                        <div class="metric-item stagger-1 reveal"><span class="metric-number" data-count="120">+0</span><span class="metric-label" data-i18n="metric1">Visuals created</span></div>
+                        <div class="metric-item stagger-2 reveal"><span class="metric-number" data-count="50">+0</span><span class="metric-label" data-i18n="metric2">Fashion campaigns</span></div>
+                        <div class="metric-item stagger-3 reveal"><span class="metric-number" data-count="15">+0</span><span class="metric-label" data-i18n="metric3">Brands transformed</span></div>
+                    </div>
+                    <div class="case-study">
+                        <h3 class="case-study-title" data-i18n="cs_title">Visual & Commercial Transformation</h3>
+                        <ul class="case-study-list">
+                            <li><strong data-i18n="cs_problem_label">Problem:</strong> <span data-i18n="cs_problem">Obsolete visual identity and generic digital advertising</span></li>
+                            <li><strong data-i18n="cs_solution_label">Solution:</strong> <span data-i18n="cs_solution">Strategic digital rebranding with premium AI content</span></li>
+                            <li><strong data-i18n="cs_result_label">Result:</strong> <span data-i18n="cs_result">Professional image and measurable increase in online sales</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="success-case-visual reveal-right">
+                    <div class="before-after-panel">
+                        <span class="before-after-badge badge-before" data-i18n="before">Before</span>
+                        <img src="https://i.postimg.cc/52K7NC95/Antes.jpg" alt="Before">
+                    </div>
+                    <div class="before-after-panel">
+                        <span class="before-after-badge badge-after" data-i18n="after">After</span>
+                        <img src="https://i.postimg.cc/g2tSkZcV/Despues.jpg" alt="After">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         SERVICES SECTION
+         ============================================ -->
+    <section class="services-grid" id="services-grid">
+        <div class="services-grid-container">
+            <p class="section-label" style="text-align:center;display:flex;justify-content:center;" data-i18n="services_label">Services</p>
+            <h2 class="services-grid-title reveal" data-i18n="services_grid_title">Professional Approach / <strong>Solutions</strong></h2>
+            <div class="services-grid-row">
+                <div class="service-card reveal stagger-1">
+                    <div class="service-card-image"><img src="https://i.postimg.cc/dV3hT6ZX/Banner-Generacion-de-Modelos-b.jpg" alt="AI Models"></div>
+                    <div class="service-card-content">
+                        <span class="service-card-number">01</span>
+                        <h3 class="service-card-title" data-i18n="svc1_title">AI Model & Image Generation</h3>
+                        <p class="service-card-description" data-i18n="svc1_desc">Creation of personalized, unique, and brand-consistent avatars for e-commerce.</p>
+                        <a href="contact.html" class="service-card-footer"><span data-i18n="learn_more">Learn more</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+                <div class="service-card reveal stagger-2">
+                    <div class="service-card-image"><img src="https://i.postimg.cc/ZnnNKVbZ/Banner-Diseno-de-Moda-Digital-3D.jpg" alt="3D Fashion"></div>
+                    <div class="service-card-content">
+                        <span class="service-card-number">02</span>
+                        <h3 class="service-card-title" data-i18n="svc2_title">3D Digital Fashion Design with CLO 3D</h3>
+                        <p class="service-card-description" data-i18n="svc2_desc">Digitization of collections with photorealistic textile simulation and virtual prototyping.</p>
+                        <a href="contact.html" class="service-card-footer"><span data-i18n="learn_more">Learn more</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+                <div class="service-card reveal stagger-3">
+                    <div class="service-card-image"><img src="https://i.postimg.cc/nrgz1Xrz/Banner-Contenido-para-E-commerce.jpg" alt="Social Media"></div>
+                    <div class="service-card-content">
+                        <span class="service-card-number">03</span>
+                        <h3 class="service-card-title" data-i18n="svc3_title">Content for E-commerce & Social Media</h3>
+                        <p class="service-card-description" data-i18n="svc3_desc">AI-powered visual strategies and premium advertising design to optimize your digital identity.</p>
+                        <a href="contact.html" class="service-card-footer"><span data-i18n="learn_more">Learn more</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         ABOUT SECTION
+         ============================================ -->
+    <section class="about" id="about">
+        <div class="section-container">
+            <div class="about-grid">
+                <div class="about-image reveal-left"><img src="https://i.postimg.cc/6QPK1ppk/About-me-Image.jpg" alt="JC Labs"></div>
+                <div class="about-text reveal-right">
+                    <p class="section-label" data-i18n="nav_about">About Us</p>
+                    <h2 class="section-title" data-i18n="about_title">The Vision Behind<br><strong>JC Labs</strong></h2>
+                    <p data-i18n="about_p1">At JC Labs, we merge cutting-edge AI technology with a deep passion for design. Our studio specializes in creating impactful visual campaigns and comprehensive creative systems.</p>
+                    <p data-i18n="about_p2">We believe in the power of human creativity amplified by intelligent systems. Every project is an opportunity to explore the intersection between art and technology.</p>
+                    <div class="about-skills">
+                        <span class="skill-tag" data-i18n="skill1">Product Design</span>
+                        <span class="skill-tag" data-i18n="skill2">Graphic Design</span>
+                        <span class="skill-tag" data-i18n="skill3">3D Tools / CLO 3D</span>
+                        <span class="skill-tag" data-i18n="skill4">AI Image Generation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         CTA BANNER SECTION
+         ============================================ -->
+    <section class="cta-banner-section" id="cta-banner">
+        <div class="cta-banner-bg"><img src="https://image.qwenlm.ai/public_source/ef7eb748-87c2-484e-a46c-a3072089773a/1818b2b25-5b9d-4286-9114-aeac786aecfb.png" alt="CTA Background"></div>
+        <div class="cta-banner-overlay"></div>
+        <div class="cta-banner-content" id="ctaContent">
+            <span class="cta-banner-label">JC Labs</span>
+            <h2 class="cta-banner-title" data-i18n="cta_title">Looking for <strong>premium</strong> visual content without the costs of traditional production?</h2>
+            <div class="cta-banner-divider"></div>
+            <p class="cta-banner-text" data-i18n="cta_text">Forget the limitations of traditional productions. As a visual content creator and brand designer, I help you transform your business image.</p>
+            <a href="contact.html" class="cta-banner-button" data-i18n="cta_button">Contact Me<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <span class="footer-copy">Copyright © JC Labs</span>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+                <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+            </div>
+            <span class="footer-tagline" data-i18n="footer_tagline">Designing products and visual worlds with AI</span>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // PAGE LOADER
+        // ============================================
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('pageLoader').classList.add('hidden');
+            }, 2800);
+        });
+
+        // ============================================
+        // CUSTOM CURSOR
+        // ============================================
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.transform = 'translate(' + (mouseX - 4) + 'px, ' + (mouseY - 4) + 'px)';
+        });
+
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.transform = 'translate(' + (ringX - 20) + 'px, ' + (ringY - 20) + 'px)';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button, .service-card, .skill-tag').forEach(function(el) {
+            el.addEventListener('mouseenter', function() { cursorRing.classList.add('hover'); });
+            el.addEventListener('mouseleave', function() { cursorRing.classList.remove('hover'); });
+        });
+
+        // ============================================
+        // MULTILINGUAL TRANSLATIONS (EN/ES)
+        // ============================================
+        const translations = {
+            en: {
+                nav_home: "Home", nav_services: "Services", nav_portfolio: "Portfolio", nav_contact: "Contact",
+                nav_about: "About Us",
+                hero_title: "Virtual Models &<br><strong>Premium Images</strong><br>for Fashion Brands",
+                hero_subtitle: "I create AI-powered content, campaigns, and visual systems for e-commerce, fashion, and brands that need a modern, powerful, and professional image.",
+                hero_cta1: "View Work", hero_cta2: "Contact",
+                ht_tag: "Visual Design & AI for E-commerce",
+                ht_title: "We create the <em>images</em> that drive your sales.",
+                ht_desc: "I specialize in AI image generation and brand design. I help online stores and agencies transform their traditional catalog into premium visual content with high impact for Shopify. If you're looking to optimize your advertising campaign conversion and scale your business without the costs of traditional photography, let's design a unique visual identity together.",
+                met_tag: "Agile Work Methodology",
+                met_title: "From idea to final art in <em>record time</em>",
+                met_desc: "My specialized workflow combines human creative direction with advanced generative AI tools. I follow a structured process to optimize delivery times: from the initial creative briefing and iterative concept generation, to artistic refinement and delivery of optimized files for web or advertising implementation.",
+                sc_title: "A strong image can <em>transform</em> a brand completely.",
+                sc_desc: "I help brands generate impact and position themselves with scalable visuals and content designed to convert.",
+                metric1: "Visuals created", metric2: "Fashion campaigns", metric3: "Brands transformed",
+                cs_title: "Visual & Commercial Transformation",
+                cs_problem_label: "Problem:", cs_problem: "Obsolete visual identity and generic digital advertising",
+                cs_solution_label: "Solution:", cs_solution: "Strategic digital rebranding with premium AI content",
+                cs_result_label: "Result:", cs_result: "Professional image and measurable increase in online sales",
+                before: "Before", after: "After",
+                services_label: "Services",
+                services_grid_title: "Professional Approach / <strong>Solutions</strong>",
+                svc1_title: "AI Model & Image Generation", svc1_desc: "Creation of personalized, unique, and brand-consistent avatars for e-commerce.",
+                svc2_title: "3D Digital Fashion Design with CLO 3D", svc2_desc: "Digitization of collections with photorealistic textile simulation and virtual prototyping.",
+                svc3_title: "Content for E-commerce & Social Media", svc3_desc: "AI-powered visual strategies and premium advertising design to optimize your digital identity.",
+                learn_more: "Learn more",
+                about_title: "The Vision Behind<br><strong>JC Labs</strong>",
+                about_p1: "At JC Labs, we merge cutting-edge AI technology with a deep passion for design. Our studio specializes in creating impactful visual campaigns and comprehensive creative systems.",
+                about_p2: "We believe in the power of human creativity amplified by intelligent systems. Every project is an opportunity to explore the intersection between art and technology.",
+                skill1: "Product Design", skill2: "Graphic Design", skill3: "3D Tools / CLO 3D", skill4: "AI Image Generation",
+                cta_title: "Looking for <strong>premium</strong> visual content without the costs of traditional production?",
+                cta_text: "Forget the limitations of traditional productions. As a visual content creator and brand designer, I help you transform your business image.",
+                cta_button: "Contact Me",
+                footer_tagline: "Designing products and visual worlds with AI"
+            },
+            es: {
+                nav_home: "Inicio", nav_services: "Servicios", nav_portfolio: "Portafolio", nav_contact: "Contacto",
+                nav_about: "Nosotros",
+                hero_title: "Modelos Virtuales e<br><strong>Imágenes Premium</strong><br>para Marcas de Moda",
+                hero_subtitle: "Creo contenido, campañas y sistemas visuales impulsados por IA para ecommerce, moda y marcas que necesitan una imagen moderna, potente y profesional.",
+                hero_cta1: "Ver trabajos", hero_cta2: "Contacto",
+                ht_tag: "Diseño Visual & IA para Ecommerce",
+                ht_title: "Creamos las <em>imágenes</em> que impulsan tus ventas.",
+                ht_desc: "Soy especialista en generación de imágenes con Inteligencia Artificial y diseño de marca. Ayudo a tiendas online y agencias a transformar su catálogo tradicional en contenido visual premium de alto impacto para Shopify. Si buscas optimizar la conversión de tus campañas publicitarias y escalar tu negocio sin los costes de la producción fotográfica tradicional, diseñemos juntos una identidad visual única.",
+                met_tag: "Metodología de Trabajo Ágil",
+                met_title: "De la idea al arte final en <em>tiempo récord</em>",
+                met_desc: "Mi flujo de trabajo especializado combina dirección creativa humana con herramientas avanzadas de IA generativa. Sigo un proceso estructurado para optimizar los tiempos de entrega: desde el briefing creativo inicial y la generación iterativa de conceptos, hasta el refinamiento artístico y la entrega de archivos optimizados para su implementación web o publicitaria.",
+                sc_title: "Una imagen fuerte puede <em>transformar</em> por completo a una marca.",
+                sc_desc: "Ayudo a marcas a generar impacto y posicionarse con visuales escalables y contenidos diseñados para convertir.",
+                metric1: "Visuales creados", metric2: "Campañas de moda", metric3: "Marcas transformadas",
+                cs_title: "Transformación Visual & Comercial",
+                cs_problem_label: "Problema:", cs_problem: "Identidad visual obsoleta y publicidad digital genérica",
+                cs_solution_label: "Solución:", cs_solution: "Rebranding digital estratégico con contenido premium IA",
+                cs_result_label: "Resultado:", cs_result: "Imagen profesional y aumento medible en ventas online",
+                before: "Antes", after: "Después",
+                services_label: "Servicios",
+                services_grid_title: "Enfoque Profesional / <strong>Soluciones</strong>",
+                svc1_title: "Generación de Modelos e Imágenes con IA", svc1_desc: "Creación de avatares personalizados, únicos y consistentes de marca para ecommerce.",
+                svc2_title: "Diseño de Moda Digital 3D con CLO 3D", svc2_desc: "Digitalización de colecciones con simulación textil fotorrealista y prototipado virtual.",
+                svc3_title: "Contenido para E-commerce & Social Media", svc3_desc: "Estrategias visuales con IA y diseño publicitario premium para optimizar tu identidad digital.",
+                learn_more: "Saber más",
+                about_title: "La Visión Detrás de<br><strong>JC Labs</strong>",
+                about_p1: "En JC Labs, fusionamos tecnología de IA de vanguardia con una profunda pasión por el diseño. Nuestro estudio se especializa en crear campañas visuales impactantes y sistemas creativos integrales.",
+                about_p2: "Creemos en el poder de la creatividad humana amplificada por sistemas inteligentes. Cada proyecto es una oportunidad para explorar la intersección entre arte y tecnología.",
+                skill1: "Diseño de Producto", skill2: "Graphic Design", skill3: "Herramientas 3D / CLO 3D", skill4: "Gen de Imágenes IA",
+                cta_title: "¿Buscas contenido visual <strong>premium</strong> sin los costes de la producción tradicional?",
+                cta_text: "Olvídate de las limitaciones de las producciones tradicionales. Como creador de contenido visual y diseñador de marca, te ayudo a transformar la imagen de tu negocio.",
+                cta_button: "Contáctame",
+                footer_tagline: "Diseñando productos y mundos visuales con IA"
+            }
+        };
+
+        let currentLang = 'en';
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(function(btn) {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                var key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) { el.innerHTML = translations[lang][key]; }
+            });
+            document.documentElement.lang = lang;
+        }
+
+        // ============================================
+        // MOBILE MENU
+        // ============================================
+        function toggleMobile() {
+            document.getElementById('mobileToggle').classList.toggle('open');
+            document.getElementById('mobileMenu').classList.toggle('open');
+            document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('open') ? 'hidden' : '';
+        }
+        function closeMobile() {
+            document.getElementById('mobileToggle').classList.remove('open');
+            document.getElementById('mobileMenu').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobile(); });
+
+        // ============================================
+        // SCROLL - NAVBAR + PARALLAX HERO
+        // ============================================
+        var heroBg = document.getElementById('heroBg');
+        var heroContent = document.querySelector('.hero-content');
+        window.addEventListener('scroll', function() {
+            var navbar = document.getElementById('navbar');
+            var scrollY = window.scrollY;
+            
+            if (scrollY > 50) { navbar.classList.add('scrolled'); }
+            else { navbar.classList.remove('scrolled'); }
+            
+            if (heroBg && scrollY < window.innerHeight * 1.5) {
+                heroBg.style.transform = 'translate3d(0, ' + (scrollY * 0.45) + 'px, 0) scale(1.05)';
+            }
+            if (heroContent && scrollY < window.innerHeight) {
+                heroContent.style.transform = 'translate3d(0, ' + (scrollY * 0.2) + 'px, 0)';
+                heroContent.style.opacity = Math.max(0, 1 - (scrollY / (window.innerHeight * 0.75)));
+            }
+        }, { passive: true });
+
+        // ============================================
+        // SCROLL REVEAL WITH INTERSECTION OBSERVER
+        // ============================================
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+            revealObserver.observe(el);
+        });
+
+        // ============================================
+        // CTA BANNER REVEAL
+        // ============================================
+        var ctaObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.2 });
+        var ctaContent = document.getElementById('ctaContent');
+        if (ctaContent) ctaObserver.observe(ctaContent);
+
+        // ============================================
+        // ANIMATED COUNTERS
+        // ============================================
+        var counterObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var el = entry.target;
+                    var target = parseInt(el.dataset.count);
+                    var current = 0;
+                    var increment = Math.ceil(target / 60);
+                    var timer = setInterval(function() {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        el.textContent = '+' + current;
+                    }, 30);
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('[data-count]').forEach(function(el) { counterObserver.observe(el); });
+
+        // ============================================
+        // 3D TILT EFFECT ON CARDS
+        // ============================================
+        document.querySelectorAll('.service-card').forEach(function(card) {
+            card.addEventListener('mousemove', function(e) {
+                var rect = card.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                var centerX = rect.width / 2;
+                var centerY = rect.height / 2;
+                var rotateX = (y - centerY) / 20;
+                var rotateY = (centerX - x) / 20;
+                card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-8px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+
+        window.addEventListener('resize', function() { if (window.innerWidth > 767) closeMobile(); });
+    </script>
+</body>
+</html>
+

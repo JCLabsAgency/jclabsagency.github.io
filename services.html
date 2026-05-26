@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JC Labs — Portfolio</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/W3r06wPf/JCLabs-favicon-03-02.png">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/400.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/600.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-jost@5.0.18/700.min.css" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --black: #0a0a0a; --white: #ffffff; --gray-100: #f5f5f5; --gray-200: #e5e5e5; --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3; --gray-500: #737373; --gray-600: #525252; --gray-700: #404040;
+            --gray-800: #262626; --gray-900: #171717; --font-heading: 'Jost', sans-serif; --font-body: 'Jost', sans-serif;
+            --primary: #4F46E5; --primary-light: #818CF8; --radius-pill: 9999px; --radius-lg: 24px;
+        }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body { font-family: var(--font-body); font-weight: 700; background: var(--white); color: var(--black); line-height: 1.6; overflow-x: hidden; cursor: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        a, button { cursor: none; }
+
+        /* ═══ CUSTOM CURSOR ═══ */
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+            background: var(--white); border-radius: 50%; pointer-events: none;
+            z-index: 10000; mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+        .cursor-ring {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            border: 1.5px solid rgba(255,255,255,0.5); border-radius: 50%;
+            pointer-events: none; z-index: 10000; mix-blend-mode: difference;
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+        }
+        .cursor-ring.hover { width: 60px; height: 60px; border-color: var(--primary-light); }
+        .cursor-ring.click { width: 30px; height: 30px; }
+
+        /* ═══ Frosted Glass Navigation ═══ */
+        .nav-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0 40px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-nav {
+            position: relative; display: flex; align-items: center;
+            padding: 14px 32px; margin-top: 20px; border-radius: 60px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.10) 100%);
+            backdrop-filter: blur(28px) saturate(200%) brightness(1.05);
+            -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.05);
+            border: 1px solid rgba(255,255,255,0.22);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.05);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden;
+        }
+        .glass-nav::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 100%);
+            border-radius: 60px 60px 0 0; pointer-events: none; z-index: 0;
+        }
+        .glass-nav::after {
+            content: ''; position: absolute; top: 0; left: -50%; width: 200%; height: 100%;
+            background: radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+        .glass-nav > * { position: relative; z-index: 1; }
+
+        .nav-container.scrolled .glass-nav {
+            margin-top: 10px; padding: 12px 32px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0.60) 100%);
+            backdrop-filter: blur(40px) saturate(220%) brightness(1.1);
+            -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.1);
+            border: 1px solid rgba(255,255,255,0.50);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.60), inset 0 -1px 0 rgba(0,0,0,0.03);
+        }
+
+        .logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+        .logo img { height: 36px; width: auto; object-fit: contain; }
+        .nav-links-wrapper { flex: 1; display: flex; justify-content: center; }
+        .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s ease; position: relative; white-space: nowrap; }
+        .nav-container.scrolled .glass-nav .nav-links a { color: var(--gray-700); }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--white); transition: width 0.3s ease; }
+        .nav-container.scrolled .glass-nav .nav-links a::after { background: var(--black); }
+        .nav-links a:hover { color: var(--white); opacity: 1; }
+        .nav-container.scrolled .glass-nav .nav-links a:hover { color: var(--black); opacity: 1; }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a.active-link { opacity: 1; }
+        .nav-links a.active-link::after { width: 100%; }
+
+        .mobile-toggle { display: none; flex-direction: column; gap: 5px; cursor: none; padding: 8px; background: none; border: none; z-index: 1002; flex-shrink: 0; }
+        .mobile-toggle span { width: 24px; height: 1.5px; background: var(--white); transition: all 0.3s ease; transform-origin: center; }
+        .nav-container.scrolled .glass-nav .mobile-toggle span { background: var(--black); }
+        .mobile-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-toggle.open span:nth-child(2) { opacity: 0; }
+        .mobile-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(30px); z-index: 999; flex-direction: column; justify-content: center; align-items: center; gap: 36px; opacity: 0; transition: opacity 0.4s ease; }
+        .mobile-menu-overlay.open { display: flex; opacity: 1; }
+        .mobile-menu-overlay a { color: var(--white); text-decoration: none; font-family: var(--font-heading); font-size: 28px; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; opacity: 0; transform: translateY(20px); transition: all 0.4s ease; }
+        .mobile-menu-overlay.open a { opacity: 1; transform: translateY(0); }
+        .mobile-menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
+        .mobile-menu-overlay.open a:nth-child(2) { transition-delay: 0.14s; }
+        .mobile-menu-overlay.open a:nth-child(3) { transition-delay: 0.20s; }
+        .mobile-menu-overlay.open a:nth-child(4) { transition-delay: 0.26s; }
+
+        /* ═══ Language Toggle ═══ */
+        .lang-toggle { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.12); backdrop-filter: blur(12px); border-radius: 30px; padding: 4px; border: 1px solid rgba(255,255,255,0.18); flex-shrink: 0; }
+        .nav-container.scrolled .glass-nav .lang-toggle { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.06); }
+        .lang-btn { padding: 6px 16px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-family: var(--font-body); font-size: 12px; font-weight: 600; letter-spacing: 1px; cursor: none; border-radius: 26px; transition: all 0.3s ease; text-transform: uppercase; }
+        .nav-container.scrolled .glass-nav .lang-btn { color: var(--gray-500); }
+        .lang-btn.active { background: var(--black); color: var(--white); }
+        .nav-container.scrolled .glass-nav .lang-btn.active { background: var(--black); color: var(--white); }
+        .lang-btn:active { transform: scale(0.95); }
+
+        /* ═══ Hero ═══ */
+        .hero { position: relative; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center; filter: grayscale(0%) contrast(1.05) brightness(0.9); }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.35) 75%, rgba(0,0,0,0.75) 100%); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 24px; max-width: 900px; }
+        .hero-title { font-family: var(--font-heading); font-size: clamp(36px, 8vw, 120px); font-weight: 400; color: var(--white); letter-spacing: clamp(6px, 2vw, 16px); text-transform: uppercase; line-height: 1; margin-bottom: 20px; text-shadow: 0 2px 40px rgba(0,0,0,0.5); }
+        .hero-subtitle { font-family: var(--font-body); font-size: clamp(13px, 2vw, 18px); color: rgba(255,255,255,0.75); letter-spacing: clamp(1px, 0.5vw, 2px); font-weight: 700; margin-bottom: 40px; line-height: 1.5; }
+        .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary { padding: 14px 36px; background: var(--white); color: var(--black); border: none; border-radius: 50px; font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: none; transition: all 0.3s ease; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,255,255,0.2); }
+        .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .scroll-indicator span { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; }
+        .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+        @keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.6); } 50% { opacity: 1; transform: scaleY(1); } }
+
+        /* ═══ Services ═══ */
+        .service-section { padding: 120px 0; background: var(--white); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .service-grid.reverse { direction: rtl; }
+        .service-grid.reverse > * { direction: ltr; }
+        .service-label { font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 16px; display: block; }
+        .service-title { font-size: 2.5rem; font-weight: 600; line-height: 1.2; margin-bottom: 24px; color: var(--black); }
+        .service-title .highlight { color: var(--primary); font-weight: 500; }
+        .service-description { font-size: 15px; line-height: 1.8; color: var(--gray-600); margin-bottom: 32px; max-width: 480px; }
+        .tags-list { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+        .tag { display: inline-flex; align-items: center; padding: 8px 20px; background: var(--gray-100); border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; color: var(--gray-600); border: 1px solid var(--gray-200); transition: all 0.3s ease; }
+        .tag:hover { background: var(--gray-200); transform: translateY(-2px); }
+        .learn-more { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--primary); text-decoration: none; transition: all 0.3s ease; cursor: none; }
+        .learn-more:hover { color: var(--primary-light); transform: translateX(4px); }
+        .learn-more svg { width: 16px; height: 16px; transition: transform 0.3s ease; }
+        .learn-more:hover svg { transform: translateX(4px); }
+        .image-card { background: var(--white); border-radius: var(--radius-lg); padding: 40px; box-shadow: 0 20px 60px -15px rgba(0,0,0,0.08); overflow: hidden; }
+        .image-card img { width: 100%; height: auto; display: block; border-radius: 16px; }
+
+        /* ═══ Process ═══ */
+        .process-section { padding: 100px 0 120px; background: var(--gray-100); margin-top: 80px; border-radius: var(--radius-lg); }
+        .process-header { text-align: center; margin-bottom: 80px; }
+        .process-title { font-size: 28px; font-weight: 700; color: var(--black); margin-bottom: 12px; }
+        .process-subtitle { font-size: 15px; color: var(--gray-500); font-weight: 400; }
+        .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
+        .process-step { text-align: center; position: relative; }
+        .process-step:not(:last-child)::after { content: ''; position: absolute; top: 40px; right: -30px; width: 60px; height: 1px; background: var(--gray-300); }
+        .step-icon { width: 80px; height: 80px; margin: 0 auto 24px; border: 2px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--white); }
+        .step-icon svg { width: 32px; height: 32px; stroke: var(--primary); stroke-width: 1.5; fill: none; }
+        .step-number { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 12px; }
+        .step-title { font-size: 16px; font-weight: 600; color: var(--black); margin-bottom: 12px; }
+        .step-description { font-size: 14px; line-height: 1.7; color: var(--gray-600); max-width: 280px; margin: 0 auto; }
+
+        /* ═══ CTA ═══ */
+        .cta-section { background: var(--black); padding: 100px 40px; text-align: center; }
+        .cta-section-inner { max-width: 800px; margin: 0 auto; }
+        .cta-label { font-family: var(--font-heading); font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 24px; }
+        .cta-title { font-family: var(--font-heading); font-size: clamp(28px, 4vw, 48px); font-weight: 400; color: var(--white); line-height: 1.2; margin-bottom: 24px; }
+        .cta-desc { font-size: 15px; font-weight: 700; color: var(--gray-400); line-height: 1.7; max-width: 560px; margin: 0 auto 40px; }
+        .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .cta-btn-primary { padding: 16px 36px; background: var(--white); color: var(--black); border: none; border-radius: 50px; font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: none; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .cta-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,255,255,0.2); }
+        .cta-btn-primary svg { width: 16px; height: 16px; }
+        .cta-btn-secondary { padding: 16px 36px; background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: none; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+        .cta-btn-secondary:hover { border-color: var(--white); transform: translateY(-2px); }
+
+        /* ═══ Footer ═══ */
+        .footer { padding: 40px; border-top: 1px solid var(--gray-200); background: var(--white); }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .footer-copy { font-size: 13px; font-weight: 700; color: var(--gray-500); }
+        .footer-social { display: flex; gap: 20px; }
+        .footer-social a { color: var(--gray-400); transition: color 0.3s ease; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; }
+        .footer-social a:hover { color: var(--black); background: var(--gray-100); }
+        .footer-tagline { font-size: 13px; font-weight: 700; color: var(--gray-400); font-style: italic; }
+
+        /* ═══ Reveal ═══ */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ═══ Responsive ═══ */
+        @media (max-width: 1024px) {
+            .nav-container { padding: 0 24px; }
+            .service-title { font-size: 2rem; }
+        }
+        @media (max-width: 767px) {
+            html { font-size: 15px; }
+            body { cursor: auto; }
+            a, button { cursor: auto; }
+            .cursor-dot, .cursor-ring { display: none; }
+            .nav-container { padding: 0 16px; }
+            .glass-nav { padding: 12px 20px; margin-top: 0; border-radius: 50px; }
+            .nav-container.scrolled .glass-nav { margin-top: 0; padding: 10px 20px; }
+            .glass-nav::before, .glass-nav::after { border-radius: 50px 50px 0 0; }
+            .mobile-toggle { display: flex; }
+            .logo { margin-left: 20px; }
+            .logo img { height: 28px; }
+            .nav-links-wrapper { display: none !important; }
+            .lang-toggle { margin-left: auto; }
+            .hero-content { padding: 0 20px; }
+            .hero-title { margin-bottom: 16px; }
+            .hero-subtitle { margin-bottom: 32px; line-height: 1.6; }
+            .hero-ctas { flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 280px; margin: 0 auto; }
+            .btn-primary { width: 100%; text-align: center; padding: 16px 32px; font-size: 15px; }
+            .container { padding: 0 20px; }
+            .service-section { padding: 80px 0; }
+            .service-grid { grid-template-columns: 1fr; gap: 48px; }
+            .service-grid.reverse { direction: ltr; }
+            .service-title { font-size: 1.75rem; }
+            .tags-list { gap: 8px; }
+            .tag { font-size: 12px; padding: 6px 16px; }
+            .process-grid { grid-template-columns: 1fr; gap: 48px; }
+            .process-step:not(:last-child)::after { display: none; }
+            .image-card { padding: 24px; }
+            .cta-section { padding: 80px 20px; }
+            .cta-buttons { flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 280px; margin: 0 auto; }
+            .cta-btn-primary, .cta-btn-secondary { width: 100%; text-align: center; justify-content: center; padding: 16px 32px; font-size: 15px; }
+            .footer { padding: 32px 20px; }
+            .footer-content { flex-direction: column; text-align: center; gap: 16px; }
+            .footer-social { gap: 12px; }
+            .footer-tagline { text-align: center; }
+            .mobile-menu-overlay a { font-size: 24px; letter-spacing: 2px; }
+            .footer-social a { width: 44px; height: 44px; }
+            .lang-btn { min-height: 36px; display: flex; align-items: center; }
+        }
+        @media (max-width: 400px) {
+            .nav-container { padding: 0 12px; top: 10px; left: 10px; right: 10px; }
+            .glass-nav { padding: 10px 16px; }
+            .hero-subtitle { font-size: 13px; }
+        }
+        @media (hover: none) {
+            .btn-primary:hover, .cta-btn-primary:hover, .cta-btn-secondary:hover { transform: none; box-shadow: none; }
+            .footer-social a:hover { background: transparent; }
+            .footer-social a:active { background: var(--gray-100); color: var(--black); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+            html { scroll-behavior: auto; }
+            .reveal { opacity: 1; transform: none; }
+            .cursor-dot, .cursor-ring { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- ═══ NAVIGATION ═══ -->
+    <nav class="nav-container" id="navbar">
+        <div class="glass-nav">
+            <button class="mobile-toggle" id="mobileToggle" onclick="toggleMobile()" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+            <a href="index.html" class="logo"><img src="https://i.postimg.cc/3wSN81fy/JC-Labs-Logo.png" alt="JC Labs"></a>
+            <div class="nav-links-wrapper">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html" data-i18n="nav_home">Inicio</a></li>
+                    <li><a href="services.html" data-i18n="nav_services">Servicios</a></li>
+                    <li><a href="portfolio.html" data-i18n="nav_portfolio">Portfolio</a></li>
+                    <li><a href="contact.html" data-i18n="nav_contact">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="es" onclick="setLang('es')">ES</button>
+                <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <a href="index.html" onclick="closeMobile()" data-i18n="nav_home">Inicio</a>
+        <a href="services.html" onclick="closeMobile()" data-i18n="nav_services">Servicios</a>
+        <a href="portfolio.html" onclick="closeMobile()" data-i18n="nav_portfolio">Portfolio</a>
+        <a href="contact.html" onclick="closeMobile()" data-i18n="nav_contact">Contacto</a>
+    </div>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"><img src="https://i.postimg.cc/PJK3hdPb/Banner-3D-floating-wardrobe-items.jpg" alt="JC Labs"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">JC LABS</h1>
+            <p class="hero-subtitle" data-i18n="hero_subtitle">Modelos IA para Ecommerce · Social Media · Diseño 3D · Avatares</p>
+            <div class="hero-ctas">
+                <a href="contact.html" class="btn-primary" data-i18n="hero_contact">Contacto</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span data-i18n="hero_scroll">Descubre más</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ═══ SERVICE 01 ═══ -->
+    <section class="service-section" id="service01">
+        <div class="container">
+            <div class="service-grid">
+                <div class="service-content reveal">
+                    <span class="service-label" data-i18n="s01_label">SERVICIO 01</span>
+                    <h2 class="service-title" data-i18n="s01_title">Generación de <span class="highlight">Modelos e Imágenes con IA</span> para E-commerce</h2>
+                    <p class="service-description" data-i18n="s01_desc">Creación de avatares personalizados, únicos y consistentes de marca. Vestimos a estos avatares con las prendas reales de los clientes. Ideal para tiendas en Shopify y creación de imágenes de campaña de alto impacto sin costes de producción tradicionales.</p>
+                    <div class="tags-list">
+                        <span class="tag" data-i18n="s01_tag1">Modelos Virtuales IA</span>
+                        <span class="tag" data-i18n="s01_tag2">Fotografía E-commerce</span>
+                        <span class="tag" data-i18n="s01_tag3">Catálogos Shopify</span>
+                        <span class="tag" data-i18n="s01_tag4">Campañas Visuales</span>
+                    </div>
+                    <a href="contact.html" class="learn-more"><span data-i18n="learn_more">Saber más</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                </div>
+                <div class="image-wrapper reveal">
+                    <div class="image-card">
+                        <img src="https://i.postimg.cc/XvWfrxxK/Services-01.jpg" alt="Avatar IA para E-commerce">
+                    </div>
+                </div>
+            </div>
+
+            <div class="process-section reveal">
+                <div class="process-header">
+                    <h3 class="process-title" data-i18n="s01_process_title">Proceso de Trabajo</h3>
+                    <p class="process-subtitle" data-i18n="s01_process_sub">De la idea a la imagen final en 3 pasos</p>
+                </div>
+                <div class="process-grid">
+                    <div class="process-step">
+                        <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+                        <div class="step-number" data-i18n="step_01">PASO 01</div>
+                        <h4 class="step-title" data-i18n="s01_step1_title">Briefing del Cliente</h4>
+                        <p class="step-description" data-i18n="s01_step1_desc">Recibimos tus ideas, referencias estéticas y objetivos de campaña para entender la visión de tu marca.</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+                        <div class="step-number" data-i18n="step_02">PASO 02</div>
+                        <h4 class="step-title" data-i18n="s01_step2_title">Imágenes del Producto</h4>
+                        <p class="step-description" data-i18n="s01_step2_desc">Comparte las fotos reales de tus prendas o productos. Nuestro equipo las integra en el proceso creativo.</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="step-number" data-i18n="step_03">PASO 03</div>
+                        <h4 class="step-title" data-i18n="s01_step3_title">Generación Final</h4>
+                        <p class="step-description" data-i18n="s01_step3_desc">Entrenamiento de la IA y generación de imágenes de campaña profesionales listas para tu Shopify.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ SERVICE 02 ═══ -->
+    <section class="service-section" id="service02">
+        <div class="container">
+            <div class="service-grid reverse">
+                <div class="image-wrapper reveal">
+                    <div class="image-card">
+                        <img src="https://i.postimg.cc/CK0GRJJG/Services-02.jpg" alt="Diseño 3D de moda">
+                    </div>
+                </div>
+                <div class="service-content reveal">
+                    <span class="service-label" data-i18n="s02_label">SERVICIO 02</span>
+                    <h2 class="service-title" data-i18n="s02_title">Diseño de <span class="highlight">Moda Digital 3D</span> con Clo 3D</h2>
+                    <p class="service-description" data-i18n="s02_desc">Digitalización de colecciones de moda con simulación textil fotorrealista. Prototipado digital y patronaje virtual que reduce costes y acelera el time-to-market de tus colecciones.</p>
+                    <div class="tags-list">
+                        <span class="tag" data-i18n="s02_tag1">Diseño de Moda 3D</span>
+                        <span class="tag" data-i18n="s02_tag2">Prototipado Clo 3D</span>
+                        <span class="tag" data-i18n="s02_tag3">Patronaje Virtual</span>
+                        <span class="tag" data-i18n="s02_tag4">Simulación Textil</span>
+                    </div>
+                    <a href="contact.html" class="learn-more"><span data-i18n="learn_more">Saber más</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ SERVICE 03 ═══ -->
+    <section class="service-section" id="service03">
+        <div class="container">
+            <div class="service-grid">
+                <div class="service-content reveal">
+                    <span class="service-label" data-i18n="s03_label">SERVICIO 03</span>
+                    <h2 class="service-title" data-i18n="s03_title">Diseño Gráfico y <span class="highlight">Branding Estratégico</span></h2>
+                    <p class="service-description" data-i18n="s03_desc">Construcción del universo visual y piezas de comunicación digital para la marca. Desde el logotipo hasta campañas completas para redes sociales que conectan con tu audiencia.</p>
+                    <div class="tags-list">
+                        <span class="tag" data-i18n="s03_tag1">Branding Moda</span>
+                        <span class="tag" data-i18n="s03_tag2">Diseño de Logotipos</span>
+                        <span class="tag" data-i18n="s03_tag3">Campañas Redes Sociales</span>
+                        <span class="tag" data-i18n="s03_tag4">Identidad Visual</span>
+                    </div>
+                    <a href="contact.html" class="learn-more"><span data-i18n="learn_more">Saber más</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+                </div>
+                <div class="image-wrapper reveal">
+                    <div class="image-card">
+                        <img src="https://i.postimg.cc/wBzX1FFN/Services-03.jpg" alt="Branding y diseño gráfico">
+                    </div>
+                </div>
+            </div>
+
+            <div class="process-section reveal">
+                <div class="process-header">
+                    <h3 class="process-title" data-i18n="s03_process_title">Proceso de Trabajo</h3>
+                    <p class="process-subtitle" data-i18n="s03_process_sub">Construyendo tu identidad de marca paso a paso</p>
+                </div>
+                <div class="process-grid">
+                    <div class="process-step">
+                        <div class="step-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+                        <div class="step-number" data-i18n="step_01">PASO 01</div>
+                        <h4 class="step-title" data-i18n="s03_step1_title">Briefing Inicial</h4>
+                        <p class="step-description" data-i18n="s03_step1_desc">Cuestionario estratégico de marca para entender tu visión, público objetivo y diferenciadores.</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+                        <div class="step-number" data-i18n="step_02">PASO 02</div>
+                        <h4 class="step-title" data-i18n="s03_step2_title">Moodboard y Referencias</h4>
+                        <p class="step-description" data-i18n="s03_step2_desc">Intercambio de ideas, referencias estéticas e inspiración del cliente para definir la dirección creativa.</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                        <div class="step-number" data-i18n="step_03">PASO 03</div>
+                        <h4 class="step-title" data-i18n="s03_step3_title">Entrega Final</h4>
+                        <p class="step-description" data-i18n="s03_step3_desc">Desarrollo y entrega del logotipo, identidad visual completa o campaña publicitaria finalizada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ CTA ═══ -->
+    <section class="cta-section" id="cta">
+        <div class="cta-section-inner reveal">
+            <p class="cta-label" data-i18n="cta_label">¿Listo para empezar?</p>
+            <h2 class="cta-title" data-i18n="cta_title">Transformemos tu Marca<br>Juntos</h2>
+            <p class="cta-desc" data-i18n="cta_desc">Ya sea que necesites modelos virtuales IA, diseño 3D de colecciones o un branding completo, estamos aquí para ayudarte a destacar en el mercado digital.</p>
+            <div class="cta-buttons">
+                <a href="mailto:jclabsdigital@gmail.com" class="cta-btn-primary">
+                    <span data-i18n="cta_contact_now">Contactar Ahora</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </a>
+                <a href="index.html" class="cta-btn-secondary" data-i18n="cta_back_top">Volver al Inicio</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="footer-copy">Copyright © JC Labs</span>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+                <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+            </div>
+            <span class="footer-tagline" data-i18n="footer_tagline">Diseñando productos y mundos visuales con IA</span>
+        </div>
+    </footer>
+
+    <script>
+        /* ═══ Translations ═══ */
+        var translations = {
+            es: {
+                nav_home: "Inicio",
+                nav_services: "Servicios",
+                nav_portfolio: "Portfolio",
+                nav_contact: "Contacto",
+                hero_subtitle: "Modelos IA para Ecommerce · Social Media · Diseño 3D · Avatares",
+                hero_contact: "Contacto",
+                hero_scroll: "Descubre más",
+                s01_label: "SERVICIO 01",
+                s01_title: 'Generación de <span class="highlight">Modelos e Imágenes con IA</span> para E-commerce',
+                s01_desc: "Creación de avatares personalizados, únicos y consistentes de marca. Vestimos a estos avatares con las prendas reales de los clientes. Ideal para tiendas en Shopify y creación de imágenes de campaña de alto impacto sin costes de producción tradicionales.",
+                s01_tag1: "Modelos Virtuales IA", s01_tag2: "Fotografía E-commerce", s01_tag3: "Catálogos Shopify", s01_tag4: "Campañas Visuales",
+                s01_process_title: "Proceso de Trabajo",
+                s01_process_sub: "De la idea a la imagen final en 3 pasos",
+                s01_step1_title: "Briefing del Cliente",
+                s01_step1_desc: "Recibimos tus ideas, referencias estéticas y objetivos de campaña para entender la visión de tu marca.",
+                s01_step2_title: "Imágenes del Producto",
+                s01_step2_desc: "Comparte las fotos reales de tus prendas o productos. Nuestro equipo las integra en el proceso creativo.",
+                s01_step3_title: "Generación Final",
+                s01_step3_desc: "Entrenamiento de la IA y generación de imágenes de campaña profesionales listas para tu Shopify.",
+                s02_label: "SERVICIO 02",
+                s02_title: 'Diseño de <span class="highlight">Moda Digital 3D</span> con Clo 3D',
+                s02_desc: "Digitalización de colecciones de moda con simulación textil fotorrealista. Prototipado digital y patronaje virtual que reduce costes y acelera el time-to-market de tus colecciones.",
+                s02_tag1: "Diseño de Moda 3D", s02_tag2: "Prototipado Clo 3D", s02_tag3: "Patronaje Virtual", s02_tag4: "Simulación Textil",
+                s03_label: "SERVICIO 03",
+                s03_title: 'Diseño Gráfico y <span class="highlight">Branding Estratégico</span>',
+                s03_desc: "Construcción del universo visual y piezas de comunicación digital para la marca. Desde el logotipo hasta campañas completas para redes sociales que conectan con tu audiencia.",
+                s03_tag1: "Branding Moda", s03_tag2: "Diseño de Logotipos", s03_tag3: "Campañas Redes Sociales", s03_tag4: "Identidad Visual",
+                s03_process_title: "Proceso de Trabajo",
+                s03_process_sub: "Construyendo tu identidad de marca paso a paso",
+                s03_step1_title: "Briefing Inicial",
+                s03_step1_desc: "Cuestionario estratégico de marca para entender tu visión, público objetivo y diferenciadores.",
+                s03_step2_title: "Moodboard y Referencias",
+                s03_step2_desc: "Intercambio de ideas, referencias estéticas e inspiración del cliente para definir la dirección creativa.",
+                s03_step3_title: "Entrega Final",
+                s03_step3_desc: "Desarrollo y entrega del logotipo, identidad visual completa o campaña publicitaria finalizada.",
+                step_01: "PASO 01", step_02: "PASO 02", step_03: "PASO 03",
+                learn_more: "Saber más",
+                cta_label: "¿Listo para empezar?",
+                cta_title: "Transformemos tu Marca<br>Juntos",
+                cta_desc: "Ya sea que necesites modelos virtuales IA, diseño 3D de colecciones o un branding completo, estamos aquí para ayudarte a destacar en el mercado digital.",
+                cta_contact_now: "Contactar Ahora",
+                cta_back_top: "Volver al Inicio",
+                footer_tagline: "Diseñando productos y mundos visuales con IA"
+            },
+            en: {
+                nav_home: "Home",
+                nav_services: "Services",
+                nav_portfolio: "Portfolio",
+                nav_contact: "Contact",
+                hero_subtitle: "AI Models for Ecommerce · Social Media · 3D Design · Avatars",
+                hero_contact: "Contact",
+                hero_scroll: "Discover more",
+                s01_label: "SERVICE 01",
+                s01_title: 'AI <span class="highlight">Model &amp; Image Generation</span> for E-commerce',
+                s01_desc: "Creation of personalized, unique, and brand-consistent avatars. We dress these avatars with your clients' real garments. Ideal for Shopify stores and creating high-impact campaign images without traditional production costs.",
+                s01_tag1: "AI Virtual Models", s01_tag2: "E-commerce Photography", s01_tag3: "Shopify Catalogs", s01_tag4: "Visual Campaigns",
+                s01_process_title: "Workflow",
+                s01_process_sub: "From idea to final image in 3 steps",
+                s01_step1_title: "Client Briefing",
+                s01_step1_desc: "We receive your ideas, aesthetic references, and campaign goals to understand your brand vision.",
+                s01_step2_title: "Product Images",
+                s01_step2_desc: "Share real photos of your garments or products. Our team integrates them into the creative process.",
+                s01_step3_title: "Final Generation",
+                s01_step3_desc: "AI training and generation of professional campaign images ready for your Shopify store.",
+                s02_label: "SERVICE 02",
+                s02_title: '<span class="highlight">3D Digital Fashion</span> Design with Clo 3D',
+                s02_desc: "Digitization of fashion collections with photorealistic textile simulation. Digital prototyping and virtual pattern making that reduces costs and accelerates your collections' time-to-market.",
+                s02_tag1: "3D Fashion Design", s02_tag2: "Clo 3D Prototyping", s02_tag3: "Virtual Pattern Making", s02_tag4: "Textile Simulation",
+                s03_label: "SERVICE 03",
+                s03_title: 'Graphic Design &amp; <span class="highlight">Strategic Branding</span>',
+                s03_desc: "Building the visual universe and digital communication pieces for the brand. From logos to complete social media campaigns that connect with your audience.",
+                s03_tag1: "Fashion Branding", s03_tag2: "Logo Design", s03_tag3: "Social Media Campaigns", s03_tag4: "Visual Identity",
+                s03_process_title: "Workflow",
+                s03_process_sub: "Building your brand identity step by step",
+                s03_step1_title: "Initial Briefing",
+                s03_step1_desc: "Strategic brand questionnaire to understand your vision, target audience, and differentiators.",
+                s03_step2_title: "Moodboard & References",
+                s03_step2_desc: "Exchange of ideas, aesthetic references, and client inspiration to define the creative direction.",
+                s03_step3_title: "Final Delivery",
+                s03_step3_desc: "Development and delivery of the logo, complete visual identity, or finalized advertising campaign.",
+                step_01: "STEP 01", step_02: "STEP 02", step_03: "STEP 03",
+                learn_more: "Learn more",
+                cta_label: "Ready to get started?",
+                cta_title: "Let's Transform Your Brand<br>Together",
+                cta_desc: "Whether you need AI virtual models, 3D collection design, or complete branding, we're here to help you stand out in the digital market.",
+                cta_contact_now: "Contact Now",
+                cta_back_top: "Back to Top",
+                footer_tagline: "Designing products and visual worlds with AI"
+            }
+        };
+
+        var currentLang = 'es';
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.toggle('active', btn.dataset.lang === lang); });
+            document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                var key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) { el.innerHTML = translations[lang][key]; }
+            });
+            document.documentElement.lang = lang;
+        }
+
+        function toggleMobile() {
+            var toggle = document.getElementById('mobileToggle');
+            var menu = document.getElementById('mobileMenu');
+            toggle.classList.toggle('open');
+            menu.classList.toggle('open');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+        }
+        function closeMobile() {
+            document.getElementById('mobileToggle').classList.remove('open');
+            document.getElementById('mobileMenu').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobile(); });
+
+        /* ═══ Scroll: Navbar ═══ */
+        window.addEventListener('scroll', function() {
+            var navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) { navbar.classList.add('scrolled'); }
+            else { navbar.classList.remove('scrolled'); }
+        });
+
+        /* ═══ Reveal on Scroll ═══ */
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
+
+        /* ═══ Close mobile on resize ═══ */
+        window.addEventListener('resize', function() { if (window.innerWidth > 767) closeMobile(); });
+
+        /* ═══ CUSTOM CURSOR ═══ */
+        var dot = document.getElementById('cursorDot');
+        var ring = document.getElementById('cursorRing');
+        var mouseX = 0, mouseY = 0;
+        var ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.transform = 'translate(' + mouseX + 'px, ' + mouseY + 'px)';
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.transform = 'translate(' + (ringX - 20) + 'px, ' + (ringY - 20) + 'px)';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        /* Hover effect on interactive elements */
+        var hoverTargets = document.querySelectorAll('a, button, .tag, .learn-more, .lang-btn, .footer-social a');
+        hoverTargets.forEach(function(el) {
+            el.addEventListener('mouseenter', function() { ring.classList.add('hover'); });
+            el.addEventListener('mouseleave', function() { ring.classList.remove('hover'); });
+        });
+
+        /* Click effect */
+        document.addEventListener('mousedown', function() { ring.classList.add('click'); });
+        document.addEventListener('mouseup', function() { ring.classList.remove('click'); });
+    </script>
+</body>
+</html>
+
